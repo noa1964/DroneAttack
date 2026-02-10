@@ -10,13 +10,21 @@ public enum EnemyType
 
 public class PlacementDot : MonoBehaviour, IPointerClickHandler, IDragHandler
 {
-    private EnemyType enemyType; // assigned at placement
+    private EnemyType _enemyType; // assigned at placement
 
     private Camera _cam;
 
+    private GameObject _ground;
     private void Awake()
     {
-        _cam = Camera.main;
+        
+    }
+
+    public void Initialize(Camera cam, EnemyType type, GameObject ground)
+    {
+        _cam = cam;
+        _enemyType = type;
+        _ground = ground;
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -30,15 +38,35 @@ public class PlacementDot : MonoBehaviour, IPointerClickHandler, IDragHandler
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (_ground == null || _cam == null) return;
+
         Ray ray = _cam.ScreenPointToRay(eventData.position);
-        if (Physics.Raycast(ray, out RaycastHit hit))
+
+        // Get the ground collider
+        Collider groundCollider = _ground.GetComponent<Collider>();
+        if (groundCollider == null) return;
+
+        // Raycast only against the ground collider
+        if (groundCollider.Raycast(ray, out RaycastHit hit, 1000f))
         {
-            transform.position = hit.point;
+            Vector3 newPos = hit.point;
+
+            // Keep original height
+            newPos.y = transform.position.y;
+
+            transform.position = newPos;
         }
     }
 
+
     public void SetEnemyType(EnemyType type)
     {
-        enemyType = type;
+        _enemyType = type;
     }
+
+    public EnemyType GetEnemyType()
+    {
+        return _enemyType; 
+    }
+
 }

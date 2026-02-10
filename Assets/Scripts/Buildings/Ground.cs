@@ -7,19 +7,24 @@ public class Ground : MonoBehaviour, IPointerClickHandler
 {
     private Collider _collider;
     private Renderer _renderer;
+    private Floor _floor;
     private void Awake()
     {
         _collider = GetComponent<Collider>();
         _renderer = GetComponent<Renderer>();
     }
 
+    public void SetFloor(Floor floor)
+    {
+        _floor = floor;
+    }
     public void SetSelectable(bool value)
     {
         _collider.enabled = value;
 
         if (_renderer != null)
         {
-            _renderer.material.color = value ? Color.white : Color.green;
+            _renderer.material.color = value ? Color.green : Color.white;
         }
     }
 
@@ -32,5 +37,10 @@ public class Ground : MonoBehaviour, IPointerClickHandler
         {
             PlacementManager.Instance.TryPlaceOnFloor(this, hit.point);
         }
+    }
+
+    public List<Transform> GetPossibleEndPoints()
+    {
+        return _floor._PossibleEndPoints;
     }
 }

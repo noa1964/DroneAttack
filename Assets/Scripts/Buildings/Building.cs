@@ -9,22 +9,36 @@ public class Building : MonoBehaviour, IPointerClickHandler
 
     public List<Floor> _Floors;
 
+    [SerializeField] private Transform _CamTransform;
+
     private void OnEnable()
     {
         PlacementManager.SelectedBuildingUpdate += SetActiveCollider;
+        HumanSimulationManager.StartSimulation += StartSimulation;
     }
     private void OnDisable()
     {
         PlacementManager.SelectedBuildingUpdate -= SetActiveCollider;
+        HumanSimulationManager.StartSimulation -= StartSimulation;
     }
 
 
-    public void EnableOnlyFloor(int index)
+        public void EnableOnlyFloor(int index)
     {
         for (int i = 0; i < _Floors.Count; i++)
         {
             _Floors[i].SetSelectable(i == index);
             _Floors[i].floorObj.SetActive(i == index);
+        }
+    }
+
+    private void StartSimulation()
+    {
+        for (int i = 0; i < _Floors.Count; i++)
+        {
+            _Floors[i].floorObj.SetActive(true);
+            _Floors[i].SetSelectable(false);
+
         }
     }
 
@@ -49,6 +63,11 @@ public class Building : MonoBehaviour, IPointerClickHandler
                 return true;
         }
         return false;
+    }
+
+    public Transform GetCamTransform()
+    {
+        return _CamTransform;
     }
 }
 
