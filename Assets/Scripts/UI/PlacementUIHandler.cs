@@ -105,6 +105,7 @@ public class PlacementUIHandler : MonoBehaviour
     public void ConfirmBtn()
     {
         _PanleRef.SetActive(false);
+        Debug.Log("start simulation");
         HumanSimulationManager.StartSimulation?.Invoke();
     }
 

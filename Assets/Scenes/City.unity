@@ -17271,7 +17271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3b26e90a3ce7ed4189682085aa31de9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _EnemyPrefab: {fileID: 1648132909503093310, guid: 5ba26bd91c441554aa5357a5e624a637, type: 3}
+  _EnemyPrefab: {fileID: 1307694370294541491, guid: 57ef1b9831592934cbb3775b30acb630, type: 3}
 --- !u!1 &757728437
 GameObject:
   m_ObjectHideFlags: 0
@@ -30292,6 +30292,69 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4936616262381034, guid: 6f301513781ec1345b0b3d3e7b260597, type: 3}
   m_PrefabInstance: {fileID: 1327934625}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1328497130
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1328497132}
+  - component: {fileID: 1328497131}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1328497131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1328497130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 1f99d5a87340ff14aa682c46fa1c7639, type: 2}
+  m_BuildHeightMesh: 0
+--- !u!4 &1328497132
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1328497130}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 11.368996, y: -12.623236, z: -35.197586}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1328573102
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38955,7 +39018,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 183
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -40657,7 +40720,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!95 &1779732460
 Animator:
   serializedVersion: 5
@@ -49252,6 +49315,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 5772351790650048092, guid: 784268144e87c6c4e827ef56384753d3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5836447932958088296, guid: 784268144e87c6c4e827ef56384753d3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 64.394
@@ -49617,7 +49684,7 @@ GameObject:
   - component: {fileID: 2222113399364580826}
   - component: {fileID: 3071539702298988889}
   - component: {fileID: 3071539702298988890}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BuildingJ_Floor1_Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50749,7 +50816,7 @@ GameObject:
   - component: {fileID: 4739821374110048778}
   - component: {fileID: 7837768573417346027}
   - component: {fileID: 7837768573417346028}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BuildingJ_Floor2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50978,7 +51045,7 @@ GameObject:
   - component: {fileID: 8269640123948201989}
   - component: {fileID: 8269640123948201990}
   - component: {fileID: 8269640123948201991}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BuildingJ_Floor3_Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51769,3 +51836,4 @@ SceneRoots:
   - {fileID: 1712587526}
   - {fileID: 511430761}
   - {fileID: 1330991513}
+  - {fileID: 1328497132}

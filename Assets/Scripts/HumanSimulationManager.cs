@@ -11,11 +11,11 @@ public class HumanSimulationManager : MonoBehaviour
 
     private void OnEnable()
     {
-        StartSimulation += StartSimulation;
+        StartSimulation += StarHumantSimulation;
     }
     private void OnDisable()
     {
-        StartSimulation -= StartSimulation;
+        StartSimulation -= StarHumantSimulation;
     }
 
     // Start is called before the first frame update
