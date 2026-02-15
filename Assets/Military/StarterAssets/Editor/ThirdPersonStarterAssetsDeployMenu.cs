@@ -19,7 +19,7 @@ namespace StarterAssets
         {
             var thirdPersonControllers = FindObjectsOfType<ThirdPersonController>();
             var player = thirdPersonControllers.FirstOrDefault(controller => controller.GetComponent<Animator>() && controller.CompareTag(PlayerTag));
-            GameObject playerGameObject;
+            UnityEngine.GameObject playerGameObject;
 
             // player
             if (player == null)
@@ -37,7 +37,7 @@ namespace StarterAssets
         {
             var thirdPersonControllers = FindObjectsOfType<ThirdPersonController>();
             var player = thirdPersonControllers.FirstOrDefault(controller => !controller.GetComponent<Animator>() && controller.CompareTag(PlayerTag));
-            GameObject playerGameObject;
+            UnityEngine.GameObject playerGameObject;
 
             // player
             if (player == null)

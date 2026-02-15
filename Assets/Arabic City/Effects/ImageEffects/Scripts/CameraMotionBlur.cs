@@ -33,7 +33,7 @@ namespace UnityStandardAssets.ImageEffects
         public float softZDistance = 0.005f;	// for z overlap check softness (reconstruction filter only)
         public int velocityDownsample = 1;	// low resolution velocity buffer? (optimization)
         public LayerMask excludeLayers = 0;
-        private GameObject tmpCam = null;
+        private UnityEngine.GameObject tmpCam = null;
 
         // resources
         public Shader shader;
@@ -347,9 +347,9 @@ namespace UnityStandardAssets.ImageEffects
         Camera GetTmpCam () {
             if (tmpCam == null) {
                 string name = "_" + _camera.name + "_MotionBlurTmpCam";
-                GameObject go = GameObject.Find (name);
+                UnityEngine.GameObject go = UnityEngine.GameObject.Find (name);
                 if (null == go) // couldn't find, recreate
-                    tmpCam = new GameObject (name, typeof (Camera));
+                    tmpCam = new UnityEngine.GameObject (name, typeof (Camera));
                 else
                     tmpCam = go;
             }

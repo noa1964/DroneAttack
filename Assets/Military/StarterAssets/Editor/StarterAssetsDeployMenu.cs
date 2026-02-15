@@ -27,7 +27,7 @@ namespace StarterAssets
         // Get the path to the template prefabs 
         private static string StarterAssetsPath => PathToThisFile;
 
-        private static GameObject _cinemachineVirtualCamera;
+        private static UnityEngine.GameObject _cinemachineVirtualCamera;
 
         /// <summary>
         /// Get the relative root path of the StarterAssets install - works even if user has
@@ -70,13 +70,13 @@ namespace StarterAssets
         {
             CheckMainCamera(prefabPath);
 
-            GameObject vcam = GameObject.Find(CinemachineVirtualCameraName);
+            UnityEngine.GameObject vcam = UnityEngine.GameObject.Find(CinemachineVirtualCameraName);
 
             if (!vcam)
             {
                 HandleInstantiatingPrefab(StarterAssetsPath + prefabPath,
                     CinemachineVirtualCameraName,
-                    out GameObject vcamPrefab);
+                    out UnityEngine.GameObject vcamPrefab);
                 _cinemachineVirtualCamera = vcamPrefab;
             }
             else
@@ -84,11 +84,11 @@ namespace StarterAssets
                 _cinemachineVirtualCamera = vcam;
             }
 
-            GameObject[] targets = GameObject.FindGameObjectsWithTag(CinemachineTargetTag);
-            GameObject target = targets.FirstOrDefault(t => t.transform.IsChildOf(targetParent));
+            UnityEngine.GameObject[] targets = UnityEngine.GameObject.FindGameObjectsWithTag(CinemachineTargetTag);
+            UnityEngine.GameObject target = targets.FirstOrDefault(t => t.transform.IsChildOf(targetParent));
             if (target == null)
             {
-                target = new GameObject("PlayerCameraRoot");
+                target = new UnityEngine.GameObject("PlayerCameraRoot");
                 target.transform.SetParent(targetParent);
                 target.transform.localPosition = new Vector3(0f, 1.375f, 0f);
                 target.tag = CinemachineTargetTag;
@@ -99,7 +99,7 @@ namespace StarterAssets
 
         private static void CheckMainCamera(string prefabPath)
         {
-            GameObject[] mainCameras = GameObject.FindGameObjectsWithTag(MainCameraTag);
+            UnityEngine.GameObject[] mainCameras = UnityEngine.GameObject.FindGameObjectsWithTag(MainCameraTag);
 
             if (mainCameras.Length < 1)
             {
@@ -115,8 +115,8 @@ namespace StarterAssets
             }
         }
 
-        private static void CheckVirtualCameraFollowReference(GameObject target,
-            GameObject cinemachineVirtualCamera)
+        private static void CheckVirtualCameraFollowReference(UnityEngine.GameObject target,
+            UnityEngine.GameObject cinemachineVirtualCamera)
         {
             var serializedObject =
                 new SerializedObject(cinemachineVirtualCamera.GetComponent<CinemachineVirtualCamera>());
@@ -125,9 +125,9 @@ namespace StarterAssets
             serializedObject.ApplyModifiedProperties();
         }
 
-        private static void HandleInstantiatingPrefab(string path, string prefabName, out GameObject prefab)
+        private static void HandleInstantiatingPrefab(string path, string prefabName, out UnityEngine.GameObject prefab)
         {
-            prefab = (GameObject) PrefabUtility.InstantiatePrefab(
+            prefab = (UnityEngine.GameObject)PrefabUtility.InstantiatePrefab(
                 AssetDatabase.LoadAssetAtPath<Object>($"{path}{prefabName}.prefab"));
             Undo.RegisterCreatedObjectUndo(prefab, "Instantiate Starter Asset Prefab");
 

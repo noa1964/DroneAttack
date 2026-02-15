@@ -1,23 +1,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
+using System.Linq;
 
 public class PlacementUIHandler : MonoBehaviour
 {
+    
     [Header("UI References")]
     [SerializeField] private GameObject _PanleRef;
     [SerializeField] private TMP_Dropdown _FloorDropdown;
     [SerializeField] private TMP_Dropdown _EnemyTypeDropdown;
-
-    [Header("Enemy Types (Enum)")]
-    [SerializeField]
-    private List<EnemyType> enemyTypes =
-        new List<EnemyType>() { EnemyType.EnemyA, EnemyType.EnemyB, EnemyType.EnemyC };
+    [SerializeField] private TMP_Dropdown _WeaponTypeDropdown;
+    [SerializeField] private GameObject _BlockPanel;
+    [Header("Display")]
+    [SerializeField] private List<EnemyInfo> _Enemies;
+    [SerializeField] private List<Weapon> _Weapons;
 
     private Building _selectedBuilding;
     private List<Floor> _floors = new List<Floor>();
 
     private EnemyType _selectedEnemy;
+    private WeaponType _selectedWeapon;
 
     #region Unity
 
@@ -34,7 +38,10 @@ public class PlacementUIHandler : MonoBehaviour
     private void Start()
     {
         SetupEnemyDropdown();
+        SetupWeaponDropdown();
         SetupFloorDropdown();
+        _BlockPanel.SetActive(true);
+       // _PanleRef.SetActive(true);
     }
 
     #endregion
@@ -45,19 +52,28 @@ public class PlacementUIHandler : MonoBehaviour
     {
         _EnemyTypeDropdown.ClearOptions();
 
-        List<string> options = new List<string>();
-        foreach (var type in enemyTypes)
-            options.Add(type.ToString());
+        var enumNames = Enum.GetNames(typeof(EnemyType)).ToList();
 
-        _EnemyTypeDropdown.AddOptions(options);
+        _EnemyTypeDropdown.AddOptions(enumNames);
         _EnemyTypeDropdown.onValueChanged.AddListener(OnEnemyTypeChanged);
 
-        // Default selection
-        if (enemyTypes.Count > 0)
-            PlacementManager.Instance.selectedEnemyType = enemyTypes[0];
 
         OnEnemyTypeChanged(0);
     }
+
+    private void SetupWeaponDropdown()
+    {
+        _WeaponTypeDropdown.ClearOptions();
+
+        var enumNames = Enum.GetNames(typeof(WeaponType)).ToList();
+
+        _WeaponTypeDropdown.AddOptions(enumNames);
+        _WeaponTypeDropdown.onValueChanged.AddListener(OnWeaponTypeChanged);
+
+
+        OnWeaponTypeChanged(0);
+    }
+
 
     private void SetupFloorDropdown()
     {
@@ -72,6 +88,9 @@ public class PlacementUIHandler : MonoBehaviour
 
     private void UpdateFloors(Building building)
     {
+        UIManager.Instance.OpenTab(GetComponent<TabPanel>());
+        _BlockPanel.SetActive(false);
+        _PanleRef.SetActive(true);
         if (building == null)
         {
             _FloorDropdown.ClearOptions();
@@ -109,9 +128,14 @@ public class PlacementUIHandler : MonoBehaviour
         HumanSimulationManager.StartSimulation?.Invoke();
     }
 
-    public EnemyType GetSelectedType()
+    public EnemyType GetSelectedEnemyType()
     {
         return _selectedEnemy;
+    }
+
+    public WeaponType GetSelectedWeaponType()
+    {
+        return _selectedWeapon;
     }
 
     #endregion
@@ -130,11 +154,41 @@ public class PlacementUIHandler : MonoBehaviour
 
     private void OnEnemyTypeChanged(int index)
     {
-        if (index < 0 || index >= enemyTypes.Count) return;
+        PlacementManager.Instance.selectedEnemyType = (EnemyType)index;
+        Debug.Log("Selected enemy: " + (EnemyType)index);
+        _selectedEnemy = (EnemyType)index;
+        SetActiveEnemyDisplay(_selectedEnemy);
 
-        PlacementManager.Instance.selectedEnemyType = enemyTypes[index];
-        Debug.Log("Selected enemy: " + enemyTypes[index]);
-        _selectedEnemy = enemyTypes[index];
+    }
+
+    private void OnWeaponTypeChanged(int index)
+    {
+        PlacementManager.Instance.selectedWeaponType = (WeaponType)index;
+        Debug.Log("Selected enemy: " + (WeaponType)index);
+        _selectedWeapon = (WeaponType)index;
+        SetActiveWeaponDisplay(_selectedWeapon);
+    }
+
+    public void SetActiveEnemyDisplay(EnemyType typeToActivate)
+    {
+        foreach (var enemy in _Enemies)
+        {
+            if (enemy.enemyObj != null)
+            {
+                enemy.enemyObj.gameObject.SetActive(enemy.type == typeToActivate);
+            }
+        }
+    }
+
+    public void SetActiveWeaponDisplay(WeaponType typeToActivate)
+    {
+        foreach (var weapon in _Weapons)
+        {
+            if (weapon.weaponObj != null)
+            {
+                weapon.weaponObj.SetActive(weapon.type == typeToActivate);
+            }
+        }
     }
 
     #endregion

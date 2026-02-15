@@ -1,59 +1,59 @@
 fileFormatVersion: 2
 guid: 9a66642480b32c441b01a81c2ff1f83f
 ModelImporter:
-  serializedVersion: 20200
+  serializedVersion: 22200
   internalIDToNameTable: []
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Boots_3
-    second: {fileID: 2100000, guid: 0c70ba69799139142a1ee211974bf8de, type: 2}
+    second: {fileID: 2100000, guid: a37a3abd1c47cc14e8e8bf0fb6d54a2b, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Decals_1
-    second: {fileID: 2100000, guid: ca43347ba095b564191b8989e996772e, type: 2}
+    second: {fileID: 2100000, guid: f80a4f016e745df42bed781e9445e4e8, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Equip_1
-    second: {fileID: 2100000, guid: 6c950909c92acf745945a67015f99ffb, type: 2}
+    second: {fileID: 2100000, guid: 8566ad36ef4cb7743bab2d61b8619bf6, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Equip_2
-    second: {fileID: 2100000, guid: 1a06fc1e1b69d4c4caed3c5953938a28, type: 2}
+    second: {fileID: 2100000, guid: 5bebd247775aecf4ba49e3d964321bd8, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Hands_1
-    second: {fileID: 2100000, guid: 1c391959fcd85d04683b15d526ff7f61, type: 2}
+    second: {fileID: 2100000, guid: ecb5ebe6ce6c2664d9f122e7c8600c84, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Head_3
-    second: {fileID: 2100000, guid: c9556fbb68ac43a4da5485e09a349a34, type: 2}
+    second: {fileID: 2100000, guid: 78cf4ae11594be344adf9e8dfb9a355e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Helmet_2
-    second: {fileID: 2100000, guid: 78a17c8619589554d90f6a73c277531b, type: 2}
+    second: {fileID: 2100000, guid: 6b95e38336ab84946a12bf463dbc9796, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Pants_2
-    second: {fileID: 2100000, guid: f5b02b7ec2d3809448e91469d2daf278, type: 2}
+    second: {fileID: 2100000, guid: b22e50dfed3f2e3499ae2957f720b63a, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Shirt_7
-    second: {fileID: 2100000, guid: f81112b4d84c4c94599e34e22c4cf0d8, type: 2}
+    second: {fileID: 2100000, guid: 1ec708a44bbd31944b46e8544eb6d250, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Vest_1
-    second: {fileID: 2100000, guid: 85442a5678b051043a848d96f57c039d, type: 2}
+    second: {fileID: 2100000, guid: 1b0bf29c2413ac64eaa9038d1f7adf7e, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -64,6 +64,7 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
@@ -89,10 +90,12 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
+    importPhysicalCameras: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
+    nodeNameCollisionStrategy: 0
     fileIdsGeneration: 2
     swapUVChannels: 0
     generateSecondaryUV: 0
@@ -104,6 +107,7 @@ ModelImporter:
     skinWeightsMode: 0
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
+    optimizeBones: 1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -114,6 +118,7 @@ ModelImporter:
     secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -962,6 +967,8 @@ ModelImporter:
   humanoidOversampling: 1
   avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

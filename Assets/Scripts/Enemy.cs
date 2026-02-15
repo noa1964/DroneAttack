@@ -1,12 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+
+public enum EnemyType
+{
+    EnemyA,
+    EnemyB,
+    EnemyC
+}
+
+public enum WeaponType
+{
+    WeaponA,
+    WeaponB,
+    WeaponC
+}
 
 public class Enemy : MonoBehaviour
 {
     private EnemyType _enemyType;
-    private Vector3 _targetPos;
+    private WeaponType _weaponType;
+    private Transform _targetTrans;
     private NavMeshAgent _agent;
     private bool _goingToFinalTarget = false;
 
@@ -14,22 +30,30 @@ public class Enemy : MonoBehaviour
 
     private Animator _animator;
 
+    [SerializeField] private Transform _CamTrans;
+
+    [Header("Weapon")]
+    [SerializeField] private List<Weapon> Weapons;
+
     [Header("Random Walk Settings")]
     public float randomWalkRadius = 5f;
     public float minRandomTime = 2f;
     public float maxRandomTime = 5f;
 
+    
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
     }
 
-    public void Initialize(EnemyType type, Vector3 pos)
+    public void Initialize(EnemyType enemy, WeaponType weapon, Transform trans)
     {
-        _enemyType = type;
-        _targetPos = pos;
+        _enemyType = enemy;
+        _targetTrans = trans;
+        _weaponType = weapon;
 
+        SetWeapon();
         StartCoroutine(RandomWalkThenGoToTarget());
     }
 
@@ -44,6 +68,11 @@ public class Enemy : MonoBehaviour
                 OnReachedTarget();
             }
         }
+    }
+
+    private void SetWeapon()
+    {
+        Weapons.FirstOrDefault(w => w.type == _weaponType)?.weaponObj.SetActive(true);
     }
 
     private IEnumerator RandomWalkThenGoToTarget()
@@ -65,9 +94,13 @@ public class Enemy : MonoBehaviour
         }
 
         _goingToFinalTarget = true;
-        _agent.SetDestination(_targetPos);
+        _agent.SetDestination(_targetTrans.position);
     }
 
+    public Transform GetCamTrans()
+    {
+        return _CamTrans;
+    }
     private Vector3 GetRandomPoint(Vector3 center, float radius)
     {
         Vector3 randomDirection = Random.insideUnitSphere * radius;
@@ -87,6 +120,9 @@ public class Enemy : MonoBehaviour
         _reachedFinalPoint = true;
 
         _agent.isStopped = true;
+        _agent.updateRotation = false;
+
+        StartCoroutine(RotateToTarget());
 
         if (_animator != null)
         {
@@ -94,4 +130,29 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    private IEnumerator RotateToTarget()
+    {
+        Quaternion startRot = transform.rotation;
+        Quaternion targetRot = _targetTrans.rotation;
+
+        float t = 0f;
+        float duration = 0.5f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            transform.rotation = Quaternion.Slerp(startRot, targetRot, t / duration);
+            yield return null;
+        }
+
+        transform.rotation = targetRot;
+    }
+
+}
+
+[System.Serializable]
+public class Weapon
+{
+    public WeaponType type;
+    public GameObject weaponObj;
 }

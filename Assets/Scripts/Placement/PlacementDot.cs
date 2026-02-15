@@ -1,16 +1,12 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public enum EnemyType
-{
-    EnemyA,
-    EnemyB,
-    EnemyC
-}
+
 
 public class PlacementDot : MonoBehaviour, IPointerClickHandler, IDragHandler
 {
     private EnemyType _enemyType; // assigned at placement
+    private WeaponType _weaponType; // assigned at placement
 
     private Camera _cam;
 
@@ -20,10 +16,11 @@ public class PlacementDot : MonoBehaviour, IPointerClickHandler, IDragHandler
         
     }
 
-    public void Initialize(Camera cam, EnemyType type, GameObject ground)
+    public void Initialize(Camera cam, EnemyType enemy, WeaponType weapon, GameObject ground)
     {
         _cam = cam;
-        _enemyType = type;
+        _enemyType = enemy;
+        _weaponType = weapon;
         _ground = ground;
     }
 
@@ -67,6 +64,11 @@ public class PlacementDot : MonoBehaviour, IPointerClickHandler, IDragHandler
     public EnemyType GetEnemyType()
     {
         return _enemyType; 
+    }
+
+    public WeaponType GetWeaponType()
+    {
+        return _weaponType;
     }
 
 }

@@ -10,6 +10,7 @@ public class PlacementManager : MonoBehaviour
     public int maxDotsPerFloor = 3;
 
     [HideInInspector] public EnemyType selectedEnemyType; // Set from UI
+    [HideInInspector] public WeaponType selectedWeaponType; // Set from UI
 
     private Ground _activeFloor;
     private Building _selectedBuilding;
@@ -79,7 +80,7 @@ public class PlacementManager : MonoBehaviour
         GameObject dot = Instantiate(dotPrefab, worldPosition, Quaternion.identity);
         var dotScript = dot.GetComponent<PlacementDot>();
         if (dotScript != null)
-            dotScript.Initialize(_PlacementCamera, _PlacementUIHandler.GetSelectedType(), _activeFloor.gameObject);
+            dotScript.Initialize(_PlacementCamera, _PlacementUIHandler.GetSelectedEnemyType(), _PlacementUIHandler.GetSelectedWeaponType(), _activeFloor.gameObject);
 
         _dotsPerFloor[ground].Add(dot);
     }

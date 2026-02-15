@@ -8,6 +8,9 @@ public class Ground : MonoBehaviour, IPointerClickHandler
     private Collider _collider;
     private Renderer _renderer;
     private Floor _floor;
+
+    Color greenGround = new Color(186f / 255f, 255f / 255f, 184f / 255f);
+
     private void Awake()
     {
         _collider = GetComponent<Collider>();
@@ -24,7 +27,7 @@ public class Ground : MonoBehaviour, IPointerClickHandler
 
         if (_renderer != null)
         {
-            _renderer.material.color = value ? Color.green : Color.white;
+            _renderer.material.color = value ? greenGround : Color.white;
         }
     }
 

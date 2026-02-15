@@ -49,7 +49,7 @@ namespace StarterAssets
 
 		[Header("Cinemachine")]
 		[Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
-		public GameObject CinemachineCameraTarget;
+		public UnityEngine.GameObject CinemachineCameraTarget;
 		[Tooltip("How far in degrees can you move the camera up")]
 		public float TopClamp = 70.0f;
 		[Tooltip("How far in degrees can you move the camera down")]
@@ -85,7 +85,7 @@ namespace StarterAssets
 		private Animator _animator;
 		private CharacterController _controller;
 		private StarterAssetsInputs _input;
-		private GameObject _mainCamera;
+		private UnityEngine.GameObject _mainCamera;
 
 		private const float _threshold = 0.01f;
 
@@ -96,7 +96,7 @@ namespace StarterAssets
 			// get a reference to our main camera
 			if (_mainCamera == null)
 			{
-				_mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+                _mainCamera = UnityEngine.GameObject.FindGameObjectWithTag("MainCamera");
 			}
 		}
 

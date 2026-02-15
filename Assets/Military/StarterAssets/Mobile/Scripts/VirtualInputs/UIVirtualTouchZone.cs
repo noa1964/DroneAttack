@@ -87,7 +87,7 @@ public class UIVirtualTouchZone : MonoBehaviour, IPointerDownHandler, IDragHandl
         handleRect.anchoredPosition = newPosition;
     }
 
-    void SetObjectActiveState(GameObject targetObject, bool newState)
+    void SetObjectActiveState(UnityEngine.GameObject targetObject, bool newState)
     {
         targetObject.SetActive(newState);
     }

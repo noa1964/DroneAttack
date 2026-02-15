@@ -3,7 +3,17 @@ guid: c2e541b53e30ced41b838dbaa7c8bc82
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: silencer001Mat
+    second: {fileID: 2100000, guid: 86f34925c0c875e4099457ddaa29d7e0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon002Mat
+    second: {fileID: 2100000, guid: 86f34925c0c875e4099457ddaa29d7e0, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
