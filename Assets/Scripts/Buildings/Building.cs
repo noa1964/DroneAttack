@@ -34,11 +34,11 @@ public class Building : MonoBehaviour, IPointerClickHandler
 
     private void StartSimulation()
     {
+        GetComponent<BoxCollider>().enabled = false;
         for (int i = 0; i < _Floors.Count; i++)
         {
             _Floors[i].floorObj.SetActive(true);
             _Floors[i].SetSelectable(false);
-
         }
     }
 
