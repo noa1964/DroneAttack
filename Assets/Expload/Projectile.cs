@@ -27,8 +27,12 @@ public class Projectile : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
-            Vector3 hitPoint = collision.contacts[0].point;
-            wallShatter.ShatterWall(collision.gameObject, hitPoint);
+            ContactPoint contact = collision.contacts[0];
+
+            Vector3 hitPoint = contact.point;
+            Vector3 hitNormal = contact.normal;
+
+            wallShatter.ShatterWall(collision.gameObject, hitPoint, hitNormal);
         }
     }
 

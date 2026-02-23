@@ -13,32 +13,40 @@ public class WallShatter : MonoBehaviour
     [Header("Shatter Settings")]
     [SerializeField] private Material crossSectionMaterial;
 
-    public int iterations = 4;
+     public int iterations = 4;
      public float radius = 0.5f;
-   public float explosionForce = 300f;
+     public float explosionForce = 300f;
      public float explosionRadius = 2f;
+
+    [Header("Impact Particles")]
+    [SerializeField] private ParticleSystem explode;
+    [SerializeField] private ParticleSystem stones;
 
     private void Start()
     {
         originalPosition = currentWall.transform.position;
         originalRotation = currentWall.transform.rotation;
+
         currentWall.tag = "Wall";
     }
 
-    public void ShatterWall(GameObject wall, Vector3 hitPoint)
+    // Called from Projectile
+    public void ShatterWall(GameObject wall, Vector3 hitPoint, Vector3 hitNormal)
     {
+        SpawnImpactParticles(hitPoint, hitNormal);
+
         ShatterRecursive(wall, hitPoint, iterations);
     }
 
     public void ResetWall()
     {
-        // Destroy all fragments
+        // Destroy fragments
         foreach (Transform t in fragmentsParent)
         {
             Destroy(t.gameObject);
         }
 
-        // Reactivate original wall
+        // Restore original wall
         currentWall.transform.position = originalPosition;
         currentWall.transform.rotation = originalRotation;
         currentWall.SetActive(true);
@@ -66,6 +74,8 @@ public class WallShatter : MonoBehaviour
             ShatterRecursive(piece, hitPoint, iterationsLeft - 1);
         }
 
+        explode.Play();
+        stones.Play();
         obj.SetActive(false);
     }
 
@@ -73,9 +83,21 @@ public class WallShatter : MonoBehaviour
     {
         Rigidbody rb = piece.AddComponent<Rigidbody>();
         rb.mass = 1f;
+
         rb.AddExplosionForce(explosionForce, hitPoint, explosionRadius);
 
         MeshCollider col = piece.AddComponent<MeshCollider>();
         col.convex = true;
+    }
+
+    private void SpawnImpactParticles(Vector3 position, Vector3 normal)
+    {
+        //explode.Play();
+        //stones.Play();
+
+        // Rotate particle so Z+ faces outward from surface
+        //particle.transform.rotation = Quaternion.LookRotation(normal);
+
+        //Destroy(particle, 3f);
     }
 }
