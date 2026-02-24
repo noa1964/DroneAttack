@@ -14,7 +14,7 @@ public class WallShatter : MonoBehaviour
     [SerializeField] private Material crossSectionMaterial;
 
      public int iterations = 4;
-     public float radius = 0.5f;
+     public float Force = 0.5f;
      public float explosionForce = 300f;
      public float explosionRadius = 2f;
 
@@ -57,7 +57,7 @@ public class WallShatter : MonoBehaviour
         if (iterationsLeft <= 0)
             return;
 
-        Vector3 planeOrigin = hitPoint + Random.insideUnitSphere * radius;
+        Vector3 planeOrigin = hitPoint + Random.insideUnitSphere ;
         Vector3 planeNormal = Random.onUnitSphere;
 
         GameObject[] slices = obj.SliceInstantiate(planeOrigin, planeNormal, crossSectionMaterial);
