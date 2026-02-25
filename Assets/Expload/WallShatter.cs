@@ -21,7 +21,16 @@ public class WallShatter : MonoBehaviour
     [Header("Impact Particles")]
     [SerializeField] private ParticleSystem explode;
     [SerializeField] private ParticleSystem stones;
+    [SerializeField] private ParticleSystem _Volume;
+    [SerializeField] private float minVolume = 2;
+    [SerializeField] private float maxVolume = 7;
 
+    private GameObject _currentVolume;
+
+    [Header("Slow Motion")]
+    [SerializeField] private bool useSlowMotion = true;
+    [SerializeField] private float slowMotionScale = 0.2f;
+    [SerializeField] private float slowMotionDuration = 0.5f;
     private void Start()
     {
         originalPosition = currentWall.transform.position;
@@ -33,19 +42,58 @@ public class WallShatter : MonoBehaviour
     // Called from Projectile
     public void ShatterWall(GameObject wall, Vector3 hitPoint, Vector3 hitNormal)
     {
-        SpawnImpactParticles(hitPoint, hitNormal);
+        if (useSlowMotion)
+            StartCoroutine(SlowMotionRoutine());
 
+        SpawnImpactParticles(hitPoint, hitNormal);
         ShatterRecursive(wall, hitPoint, iterations);
+
+        _currentVolume = Instantiate(_Volume, hitPoint, Quaternion.identity).gameObject;
+        float scaleValue = Mathf.Lerp(minVolume, maxVolume, Force);
+        _currentVolume.transform.localScale = new Vector3(scaleValue, scaleValue, scaleValue);
+
+    }
+
+    private System.Collections.IEnumerator SlowMotionRoutine()
+    {
+        float originalTimeScale = 1f;
+        float timer = 0f;
+
+        // Smooth slow down
+        while (timer < 0.1f)
+        {
+            timer += Time.unscaledDeltaTime;
+            Time.timeScale = Mathf.Lerp(originalTimeScale, slowMotionScale, timer / 0.1f);
+            Time.fixedDeltaTime = 0.02f * Time.timeScale;
+            yield return null;
+        }
+
+        yield return new WaitForSecondsRealtime(slowMotionDuration);
+
+        timer = 0f;
+
+        // Smooth return
+        while (timer < 0.2f)
+        {
+            timer += Time.unscaledDeltaTime;
+            Time.timeScale = Mathf.Lerp(slowMotionScale, originalTimeScale, timer / 0.2f);
+            Time.fixedDeltaTime = 0.02f * Time.timeScale;
+            yield return null;
+        }
+
+        Time.timeScale = 1f;
+        Time.fixedDeltaTime = 0.02f;
     }
 
     public void ResetWall()
     {
+        Time.timeScale = 1;
         // Destroy fragments
         foreach (Transform t in fragmentsParent)
         {
             Destroy(t.gameObject);
         }
-
+        Destroy(_currentVolume);
         // Restore original wall
         currentWall.transform.position = originalPosition;
         currentWall.transform.rotation = originalRotation;
@@ -73,6 +121,7 @@ public class WallShatter : MonoBehaviour
 
             ShatterRecursive(piece, hitPoint, iterationsLeft - 1);
         }
+
 
         explode.Play();
         stones.Play();

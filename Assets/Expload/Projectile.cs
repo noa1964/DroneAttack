@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -33,11 +34,22 @@ public class Projectile : MonoBehaviour
             Vector3 hitNormal = contact.normal;
 
             wallShatter.ShatterWall(collision.gameObject, hitPoint, hitNormal);
+
+            StartCoroutine(DeactivateAfterDelay(1f));
         }
+
     }
+
+    private IEnumerator DeactivateAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay); // waits in real time (game time)
+        gameObject.SetActive(false);
+    }
+
 
     public void ResetProjectile()
     {
+        gameObject.SetActive(true);
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 

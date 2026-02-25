@@ -28,8 +28,7 @@ public class ShatterUIController : MonoBehaviour
     private void UpdateShatterValues(float sliderValue)
     {
         // Assume sliderValue is 0-1 normalized
-        Debug.Log("the value : " + sliderValue);
-        float t = Mathf.Clamp01(sliderValue);
+        float t = (sliderValue)/10;
 
         // Update wall shatter parameters based on slider
         wallShatter.iterations = Mathf.RoundToInt(Mathf.Lerp(iterationsMin, iterationsMax, t));
