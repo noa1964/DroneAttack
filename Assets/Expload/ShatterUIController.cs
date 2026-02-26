@@ -30,12 +30,7 @@ public class ShatterUIController : MonoBehaviour
         // Assume sliderValue is 0-1 normalized
         float t = (sliderValue)/10;
 
-        // Update wall shatter parameters based on slider
-        wallShatter.iterations = Mathf.RoundToInt(Mathf.Lerp(iterationsMin, iterationsMax, t));
-        wallShatter.explosionForce = Mathf.Lerp(explosionForceMin, explosionForceMax, t);
-        wallShatter.explosionRadius = Mathf.Lerp(explosionRadiusMin, explosionRadiusMax, t);
-        wallShatter.Force = t; // store normalized intensity for particles, etc.
-
+        wallShatter.SetSettingsValues(t, Mathf.RoundToInt(Mathf.Lerp(iterationsMin, iterationsMax, t)), Mathf.Lerp(explosionForceMin, explosionForceMax, t), Mathf.Lerp(explosionRadiusMin, explosionRadiusMax, t));
         // Notify particle controllers or other listeners
         ForceChange?.Invoke(Mathf.RoundToInt(t * 10)); // passes 1-10
     }

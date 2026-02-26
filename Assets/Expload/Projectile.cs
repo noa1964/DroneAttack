@@ -10,7 +10,7 @@ public class Projectile : MonoBehaviour
     private Rigidbody rb;
     private Vector3 originalPos;
     private Quaternion originalRot;
-
+    private bool isDestroy = false;
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -26,8 +26,10 @@ public class Projectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Wall"))
+        if (collision.gameObject.CompareTag("Wall") && !isDestroy)
         {
+            isDestroy = true;
+            //Debug.Log("hiiii " + collision.gameObject.name);
             ContactPoint contact = collision.contacts[0];
 
             Vector3 hitPoint = contact.point;
@@ -35,7 +37,7 @@ public class Projectile : MonoBehaviour
 
             wallShatter.ShatterWall(collision.gameObject, hitPoint, hitNormal);
 
-            StartCoroutine(DeactivateAfterDelay(1f));
+            StartCoroutine(DeactivateAfterDelay(0.5f));
         }
 
     }
@@ -49,6 +51,7 @@ public class Projectile : MonoBehaviour
 
     public void ResetProjectile()
     {
+        isDestroy = false;
         gameObject.SetActive(true);
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
