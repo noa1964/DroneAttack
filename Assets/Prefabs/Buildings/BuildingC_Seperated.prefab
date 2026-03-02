@@ -163,6 +163,7 @@ MonoBehaviour:
   - {fileID: 7735295807885488401}
   - {fileID: 465647885011509445}
   _Ground: {fileID: 8403357390731066792}
+  walls: {fileID: 1280257820861206480}
 --- !u!1 &648111451305981997
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,9 +366,10 @@ GameObject:
   - component: {fileID: 6250926931882623499}
   - component: {fileID: 920766547551637754}
   - component: {fileID: 4895647862581894821}
+  - component: {fileID: 5388462895269651399}
   m_Layer: 0
   m_Name: BuildingC_Wall1
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -437,6 +439,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5388462895269651399
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1323131014096627968}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 14.325601, y: 3.0092854, z: 7.162803}
+  m_Center: {x: 0.07211542, y: -0.045490444, z: 0.29424858}
 --- !u!1 &1464698587662087754
 GameObject:
   m_ObjectHideFlags: 0
@@ -912,6 +935,7 @@ MonoBehaviour:
   - {fileID: 1946434407273147327}
   - {fileID: 6544070236877355471}
   _Ground: {fileID: 6821047809553935664}
+  walls: {fileID: 6422084543664611614}
 --- !u!1 &2902166820542920514
 GameObject:
   m_ObjectHideFlags: 0
@@ -1595,9 +1619,10 @@ GameObject:
   - component: {fileID: 1774367720327673252}
   - component: {fileID: 5548148811663768677}
   - component: {fileID: 1067613601695635777}
+  - component: {fileID: 1280257820861206480}
   m_Layer: 0
   m_Name: BuildingC_Wall3
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1667,6 +1692,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1280257820861206480
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4468339856095626725}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 3.9037805, y: 2.2573576, z: 6.685387}
+  m_Center: {x: -0.037197888, y: 0.00000029802322, z: 0.011587381}
 --- !u!1 &4514403291238095273
 GameObject:
   m_ObjectHideFlags: 0
@@ -1678,9 +1724,10 @@ GameObject:
   - component: {fileID: 3637414200053452251}
   - component: {fileID: 7061935303620579782}
   - component: {fileID: 5224898960661464626}
+  - component: {fileID: 6422084543664611614}
   m_Layer: 0
   m_Name: BuildingC_Wall2
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1750,6 +1797,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &6422084543664611614
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4514403291238095273}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 14.325598, y: 1.9367774, z: 7.1628027}
+  m_Center: {x: 0.1334033, y: -0.048588276, z: 0.12441027}
 --- !u!1 &4740424975716793627
 GameObject:
   m_ObjectHideFlags: 0
@@ -2237,6 +2305,7 @@ MonoBehaviour:
   - {fileID: 6998846741161726213}
   - {fileID: 1573039023174040891}
   _Ground: {fileID: 6808426402087991057}
+  walls: {fileID: 1323131014096627968}
 --- !u!1 &6234547841749145232
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,12 +11,11 @@ public class Floor : MonoBehaviour
     public List<GameObject> doors;
     public List<Transform> _PossibleEndPoints;
     public Ground _Ground;
+    public Collider walls;
 
     private void Start()
     {
-
         _Ground.SetFloor(this);
-
     }
 
     public void SetSelectable(bool value)
@@ -25,6 +24,12 @@ public class Floor : MonoBehaviour
     
     }
 
+    public void SetWallsCollider(bool isCollider)
+    {
+        Debug.Log(" building " + transform.parent.name);
+        Debug.Log(" walls " + walls.transform.name);
+        walls.enabled = isCollider;
+    }
      
 
 }

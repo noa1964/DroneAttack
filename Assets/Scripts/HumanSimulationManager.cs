@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class HumanSimulationManager : MonoBehaviour
 {
-
+    public static HumanSimulationManager Instance;
     public static Action StartSimulation;
-
+    private Building _selectedBuilding;
 
     private void OnEnable()
     {
@@ -18,20 +18,25 @@ public class HumanSimulationManager : MonoBehaviour
         StartSimulation -= StarHumantSimulation;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        Instance = this;
     }
 
     private void StarHumantSimulation()
     {
+        foreach(Floor floor in _selectedBuilding._Floors)
+        {
+            floor.SetWallsCollider(true);
+        }
+    }
 
+    public void SetSelectedBuilding(Building building)
+    {
+        _selectedBuilding = building;
+    }
+    public Building GetSelectedBuilding()
+    {
+        return _selectedBuilding;
     }
 }
