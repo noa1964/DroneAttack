@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -59,11 +59,16 @@ public class Projectile : MonoBehaviour
         {
             isDestroy = true;
 
+            rb.velocity = Vector3.zero;
+            rb.isKinematic = true;   // 🔥 STOP physics immediately
+            GetComponent<Collider>().enabled = false; // 🔥 prevent more hits
+
             ContactPoint contact = collision.contacts[0];
             Vector3 hitPoint = contact.point;
             Vector3 hitNormal = contact.normal;
 
             Debug.Log("collide");
+
             WallShatter.Instance.ShatterWall(
                 collision.gameObject,
                 hitPoint,
