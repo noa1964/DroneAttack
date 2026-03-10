@@ -40,7 +40,9 @@ public class Enemy : MonoBehaviour
     public float minRandomTime = 2f;
     public float maxRandomTime = 5f;
 
-    
+
+    private bool _isDead = false;
+
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
@@ -59,6 +61,8 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
+        if (_isDead) return;
+
         if (_goingToFinalTarget && !_reachedFinalPoint)
         {
             if (!_agent.pathPending &&
@@ -128,6 +132,31 @@ public class Enemy : MonoBehaviour
         {
             _animator.SetTrigger("Crouch");
         }
+    }
+
+    public void Die()
+    {
+        if (_isDead) return;
+
+        _isDead = true;
+
+        // Stop navigation
+        if (_agent != null)
+        {
+            _agent.isStopped = true;
+            _agent.velocity = Vector3.zero;
+            _agent.enabled = false;
+        }
+
+        // Stop all running coroutines (random walk etc)
+        StopAllCoroutines();
+
+        // Trigger death animation
+        if (_animator != null)
+        {
+            _animator.SetTrigger("Dead");
+        }
+
     }
 
     private IEnumerator RotateToTarget()

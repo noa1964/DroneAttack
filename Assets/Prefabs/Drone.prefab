@@ -55,7 +55,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.6061579
-  m_Center: {x: 1.308655, y: 0, z: 0.22}
+  m_Center: {x: 0, y: 0, z: 0.22}
 --- !u!114 &3011046618553671879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,7 +69,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 20
-  wallShatter: {fileID: 0}
 --- !u!54 &3372052324541709219
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -119,15 +118,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 526a598e140494241bbc9f9b5d90597f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.31
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 526a598e140494241bbc9f9b5d90597f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.23
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 526a598e140494241bbc9f9b5d90597f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.04
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 526a598e140494241bbc9f9b5d90597f, type: 3}
       propertyPath: m_LocalRotation.w

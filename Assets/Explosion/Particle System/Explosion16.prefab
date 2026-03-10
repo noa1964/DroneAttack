@@ -665,14 +665,14 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 6
     enabled: 1
-    type: 0
+    type: 4
     angle: 32
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
-    m_Rotation: {x: -90, y: 0, z: 0}
+    m_Rotation: {x: 93.88, y: 0, z: 0}
     m_Scale: {x: 1, y: 1, z: 1}
     placementMode: 0
     m_MeshMaterialIndex: 0
@@ -4938,6 +4938,10 @@ MonoBehaviour:
   maxSpeedRange: {x: 5, y: 30}
   minEmission: 10
   maxEmission: 30
+  minColorLow: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 0.6666667}
+  minColorHigh: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.7607843}
+  maxColorLow: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 0.8156863}
+  maxColorHigh: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2162591087404684422
 GameObject:
   m_ObjectHideFlags: 0
@@ -4956,7 +4960,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1408095371891589207
 Transform:
   m_ObjectHideFlags: 0
@@ -9858,6 +9862,10 @@ MonoBehaviour:
   maxSpeedRange: {x: 5, y: 25}
   minEmission: 10
   maxEmission: 80
+  minColorLow: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 0.6666667}
+  minColorHigh: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.7607843}
+  maxColorLow: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 0.8156863}
+  maxColorHigh: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2546309324038616639
 GameObject:
   m_ObjectHideFlags: 0
@@ -10028,8 +10036,8 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.5
-      minScalar: 0.2
+      scalar: 0.3
+      minScalar: 0.1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -10146,8 +10154,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 4
-      minScalar: 2
+      scalar: 3
+      minScalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -14772,12 +14780,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ps: {fileID: 3503382241932962932}
-  minSizeRange: {x: 2, y: 4}
-  maxSizeRange: {x: 5, y: 7}
-  minSpeedRange: {x: 0.2, y: 0.5}
-  maxSpeedRange: {x: 1.5, y: 2.5}
+  minSizeRange: {x: 1, y: 3}
+  maxSizeRange: {x: 3, y: 7}
+  minSpeedRange: {x: 0.1, y: 0.5}
+  maxSpeedRange: {x: 0.3, y: 2.5}
   minEmission: 1
   maxEmission: 3
+  minColorLow: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 0.6666667}
+  minColorHigh: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.7607843}
+  maxColorLow: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 0.8156863}
+  maxColorHigh: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4872414569188196117
 GameObject:
   m_ObjectHideFlags: 0
@@ -19698,6 +19710,10 @@ MonoBehaviour:
   maxSpeedRange: {x: 1.5, y: 2.5}
   minEmission: 20
   maxEmission: 80
+  minColorLow: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 0.6666667}
+  minColorHigh: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.7607843}
+  maxColorLow: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 0.8156863}
+  maxColorHigh: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6973860482047263786
 GameObject:
   m_ObjectHideFlags: 0
@@ -19874,7 +19890,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.5
+      scalar: 0.4
       minScalar: 0.2
       maxCurve:
         serializedVersion: 2
@@ -19992,8 +20008,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 4
-      minScalar: 2
+      scalar: 3
+      minScalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -24627,12 +24643,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ps: {fileID: 742003616999873452}
-  minSizeRange: {x: 2, y: 4}
-  maxSizeRange: {x: 5, y: 7}
+  minSizeRange: {x: 1, y: 4}
+  maxSizeRange: {x: 2, y: 7}
   minSpeedRange: {x: 0.2, y: 0.5}
-  maxSpeedRange: {x: 1.5, y: 2.5}
+  maxSpeedRange: {x: 0.4, y: 2.5}
   minEmission: 1
   maxEmission: 1
+  minColorLow: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 0.6666667}
+  minColorHigh: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.7607843}
+  maxColorLow: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 0.8156863}
+  maxColorHigh: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &7047221683797539851
 GameObject:
   m_ObjectHideFlags: 0
@@ -29553,6 +29573,10 @@ MonoBehaviour:
   maxSpeedRange: {x: 1.5, y: 2.5}
   minEmission: 5
   maxEmission: 20
+  minColorLow: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 0.6666667}
+  minColorHigh: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.7607843}
+  maxColorLow: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 0.8156863}
+  maxColorHigh: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &8714727661626301700
 GameObject:
   m_ObjectHideFlags: 0
@@ -29723,8 +29747,8 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.5
-      minScalar: 0.2
+      scalar: 0.3
+      minScalar: 0.1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -29841,8 +29865,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 4
-      minScalar: 2
+      scalar: 3
+      minScalar: 0.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -34476,9 +34500,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ps: {fileID: 6820874716047495686}
-  minSizeRange: {x: 2, y: 4}
-  maxSizeRange: {x: 5, y: 7}
-  minSpeedRange: {x: 0.2, y: 0.5}
-  maxSpeedRange: {x: 1.5, y: 2.5}
+  minSizeRange: {x: 0.5, y: 4}
+  maxSizeRange: {x: 3, y: 7}
+  minSpeedRange: {x: 0.1, y: 0.5}
+  maxSpeedRange: {x: 0.3, y: 2.5}
   minEmission: 1
   maxEmission: 3
+  minColorLow: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 0.6666667}
+  minColorHigh: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.7607843}
+  maxColorLow: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 0.8156863}
+  maxColorHigh: {r: 1, g: 1, b: 1, a: 1}

@@ -16,14 +16,21 @@ public class ParticleController : MonoBehaviour
     [SerializeField] private int minEmission = 5;
     [SerializeField] private int maxEmission = 20;
 
+    [Header("Color Range")]
+    [SerializeField] private Color minColorLow = Color.yellow;
+    [SerializeField] private Color minColorHigh = new Color(1f, 0.5f, 0f);
+
+    [SerializeField] private Color maxColorLow = Color.red;
+    [SerializeField] private Color maxColorHigh = new Color(0.6f, 0f, 0f);
+
     private void OnEnable()
     {
-        ShatterUIController.ForceChange += UpdateParticlesByIntensity;
+        ShatterUIController.ExplosionChange += UpdateParticlesByIntensity;
     }
 
     private void OnDisable()
     {
-        ShatterUIController.ForceChange -= UpdateParticlesByIntensity;
+        ShatterUIController.ExplosionChange -= UpdateParticlesByIntensity;
     }
 
     /// <summary>
@@ -47,6 +54,11 @@ public class ParticleController : MonoBehaviour
         float speedMin = Mathf.Lerp(minSpeedRange.x, maxSpeedRange.x, t);
         float speedMax = Mathf.Lerp(minSpeedRange.y, maxSpeedRange.y, t);
         main.startSpeed = new ParticleSystem.MinMaxCurve(speedMin, speedMax);
+
+        Color colorMin = Color.Lerp(minColorLow, maxColorLow, t);
+        Color colorMax = Color.Lerp(minColorHigh, maxColorHigh, t);
+
+        main.startColor = new ParticleSystem.MinMaxGradient(colorMin, colorMax);
 
         // ===== EMISSION BURST =====
         var emission = ps.emission;

@@ -741,7 +741,7 @@ GameObject:
   - component: {fileID: 8803323454420005145}
   - component: {fileID: 8133826519765150304}
   - component: {fileID: 2470315469768372353}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BuildingI_Wall3
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -1210,7 +1210,7 @@ Transform:
   m_GameObject: {fileID: 5032427455152104762}
   serializedVersion: 2
   m_LocalRotation: {x: 0.49651426, y: 0.50346166, z: -0.50346166, w: 0.49651426}
-  m_LocalPosition: {x: 109.26, y: 17.8, z: -9.75}
+  m_LocalPosition: {x: 17.44, y: 17.8, z: 16.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1321,7 +1321,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 6655730474317716212, guid: 97f0145129681784782e8a78c0e7fd7b, type: 3}
 --- !u!114 &5794087498717020954
@@ -1659,7 +1659,7 @@ GameObject:
   - component: {fileID: 8908139455118037331}
   - component: {fileID: 9127582107160510293}
   - component: {fileID: 2790804025202101485}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BuildingI_Wall2
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -1796,7 +1796,7 @@ GameObject:
   - component: {fileID: 8760227294474635554}
   - component: {fileID: 555805194884516572}
   - component: {fileID: 5450158361538835688}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BuildingI_Wall1
   m_TagString: Wall
   m_Icon: {fileID: 0}

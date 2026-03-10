@@ -18,7 +18,6 @@ public class ProBuilderBooleanTool : MonoBehaviour
     [SerializeField] private Transform fragmentsParent;
     [SerializeField] private LayerMask defaultLayer;
 
-    #region Public Methods
 
     /// <summary>
     /// Subtracts the subtractiveMesh from baseMesh and returns both the remaining mesh and removed part.
@@ -43,7 +42,7 @@ public class ProBuilderBooleanTool : MonoBehaviour
         removedPart.transform.SetParent(fragmentsParent);
         removedPart.transform.position = Vector3.zero;
         removedPart.transform.rotation = Quaternion.identity;
-        removedPart.layer = defaultLayer;
+        removedPart.layer = Mathf.RoundToInt(Mathf.Log(defaultLayer.value, 2));
 
         Model intersectModel = CSG.Intersect(baseCopy, subtractiveMesh);
         if (intersectModel != null && intersectModel.mesh != null)
@@ -64,7 +63,7 @@ public class ProBuilderBooleanTool : MonoBehaviour
         remainingMesh.transform.SetParent(fragmentsParent);
         remainingMesh.transform.position = Vector3.zero;
         remainingMesh.transform.rotation = Quaternion.identity;
-        remainingMesh.layer = defaultLayer;
+        remainingMesh.layer = Mathf.RoundToInt(Mathf.Log(defaultLayer.value, 2));
 
         remainingMesh.AddComponent<MeshFilter>().sharedMesh = subtractedModel.mesh;
         remainingMesh.AddComponent<MeshRenderer>().sharedMaterials = subtractedModel.materials.ToArray();
@@ -77,5 +76,4 @@ public class ProBuilderBooleanTool : MonoBehaviour
         return (remainingMesh, removedPart);
     }
 
-    #endregion
 }

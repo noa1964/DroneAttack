@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/City.unity
     guid: 95fb83e907ef51949bc37bf0f8ffaea0
+  - enabled: 1
+    path: Assets/Scenes/CarScenario.unity
+    guid: 8a4599c03bc40fa43a8ba4d7de6a7bff
   m_configObjects: {}

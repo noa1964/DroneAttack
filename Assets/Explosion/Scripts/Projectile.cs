@@ -5,7 +5,6 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private float speed = 10f;
-    //[SerializeField] private WallShatter wallShatter;
 
     private Rigidbody rb;
 
@@ -15,9 +14,11 @@ public class Projectile : MonoBehaviour
     private bool isDestroy = false;
 
     private Vector3 targetPoint;
-    private Vector3 moveDirection; // final direction to move after reaching target
+    private Vector3 moveDirection;
     private bool reachedTarget = false;
-    private float stopThreshold = 0.1f; // distance to consider "reached"
+    private bool hasTarget = false;
+
+    private float stopThreshold = 0.1f;
 
     private void Start()
     {
@@ -28,29 +29,30 @@ public class Projectile : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (targetPoint != Vector3.zero)
+        // Stop movement if destroyed or no target
+        if (isDestroy || !hasTarget)
+            return;
+
+        if (!reachedTarget)
         {
-            if (!reachedTarget)
+            Vector3 dir = targetPoint - transform.position;
+
+            if (dir.magnitude <= stopThreshold)
             {
-                Vector3 dir = (targetPoint - transform.position);
-                if (dir.magnitude <= stopThreshold)
-                {
-                    // Reached target, lock direction
-                    reachedTarget = true;
-                    moveDirection = dir.normalized; // still small movement direction
-                }
-                else
-                {
-                    moveDirection = dir.normalized;
-                }
+                reachedTarget = true;
+                moveDirection = dir.normalized;
             }
-
-            rb.velocity = moveDirection * speed;
-
-            // Optional: rotate to face movement
-            if (rb.velocity.sqrMagnitude > 0.01f)
-                transform.rotation = Quaternion.LookRotation(rb.velocity);
+            else
+            {
+                moveDirection = dir.normalized;
+            }
         }
+
+        rb.velocity = moveDirection * speed;
+
+        // Rotate projectile toward movement
+        if (rb.velocity.sqrMagnitude > 0.01f)
+            transform.rotation = Quaternion.LookRotation(rb.velocity);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -60,8 +62,10 @@ public class Projectile : MonoBehaviour
             isDestroy = true;
 
             rb.velocity = Vector3.zero;
-            rb.isKinematic = true;   // 🔥 STOP physics immediately
-            GetComponent<Collider>().enabled = false; // 🔥 prevent more hits
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+
+            GetComponent<Collider>().enabled = false;
 
             ContactPoint contact = collision.contacts[0];
             Vector3 hitPoint = contact.point;
@@ -75,7 +79,7 @@ public class Projectile : MonoBehaviour
                 hitNormal
             );
 
-            StartCoroutine(DeactivateAfterDelay(0.5f));
+            StartCoroutine(DeactivateAfterDelay(0.2f));
         }
     }
 
@@ -88,22 +92,25 @@ public class Projectile : MonoBehaviour
     public void ResetProjectile(Vector3 target)
     {
         if (rb == null)
-        {
             rb = GetComponent<Rigidbody>();
-        }
 
         isDestroy = false;
         reachedTarget = false;
-        targetPoint = target;
+        hasTarget = true;
 
+        targetPoint = target;
         moveDirection = Vector3.zero;
 
-        gameObject.SetActive(true);
-
+        rb.isKinematic = false;
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
+        GetComponent<Collider>().enabled = true;
+
+        // Optional reset transform
         // transform.position = originalPos;
         // transform.rotation = originalRot;
+
+        gameObject.SetActive(true);
     }
 }

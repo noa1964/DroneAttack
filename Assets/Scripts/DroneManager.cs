@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DroneManager : MonoBehaviour
 {
@@ -8,7 +8,15 @@ public class DroneManager : MonoBehaviour
     [SerializeField] private Projectile dronePrefab;
     [SerializeField] private Transform droneSpawnPoint;
 
-    public Vector3 targetPoint;
+    [Header("Target Indicator")]
+    [SerializeField] private GameObject targetIndicatorPrefab;
+
+    [Header("UI")]
+    [SerializeField] private GameObject _UICameras;
+
+    private GameObject currentTargetIndicator;
+
+    private Vector3 targetPoint;
     private bool hasTarget = false;
 
     private void Awake()
@@ -23,6 +31,17 @@ public class DroneManager : MonoBehaviour
         hasTarget = true;
 
         Debug.Log("Drone target updated: " + targetPoint);
+
+        // If indicator doesn't exist → create it
+        if (currentTargetIndicator == null)
+        {
+            currentTargetIndicator = Instantiate(targetIndicatorPrefab, targetPoint, Quaternion.identity);
+        }
+        else
+        {
+            // Otherwise just move it
+            currentTargetIndicator.transform.position = targetPoint;
+        }
     }
 
     // Call this from a button
@@ -34,6 +53,8 @@ public class DroneManager : MonoBehaviour
             return;
         }
 
+        _UICameras.SetActive(true);
+        // Spawn the drone
         Projectile drone = Instantiate(
             dronePrefab,
             droneSpawnPoint.position,
@@ -41,5 +62,15 @@ public class DroneManager : MonoBehaviour
         );
 
         drone.ResetProjectile(targetPoint);
+
+        // Destroy the target indicator
+        if (currentTargetIndicator != null)
+        {
+            Destroy(currentTargetIndicator);
+            currentTargetIndicator = null;
+        }
+
+        // Clear target state
+        hasTarget = false;
     }
 }

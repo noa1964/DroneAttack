@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using EzySlice;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,7 +29,7 @@ public class WallShatter : MonoBehaviour
     [Header("Slow Motion")]
     [SerializeField] private bool _UseSlowMotion = true;
     [SerializeField] private float _SlowMotionScale = 0.2f;
-    [SerializeField] private float _SlowMotionDuration = 0.5f;
+    [SerializeField] private float _SlowMotionDuration = 1;
 
     [Header("External Tools")]
     [SerializeField] private ProBuilderBooleanTool _ProBuilderTool;
@@ -37,6 +37,16 @@ public class WallShatter : MonoBehaviour
     [SerializeField] private float _MinScale = 2f;
     [SerializeField] private float _MaxScale = 7f;
 
+    [Header("Impact Cameras")]
+    [SerializeField] private Camera _TopCam;
+    [SerializeField] private Camera _SideCam;
+
+    [SerializeField] private float _TopHeightOffset = 1.5f;
+    [SerializeField] private float _SideDistance = 2.5f;
+    [SerializeField] private float _SideHeight = 0.5f;
+
+    [Header("Explosion")]
+    [SerializeField] private BombExplosion _BombExplosion;
     private Vector3 _originalPosition;
     private Quaternion _originalRotation;
     private GameObject _currentVolume;
@@ -70,21 +80,35 @@ public class WallShatter : MonoBehaviour
 
             spawnedSubMesh.transform.SetParent(_FragmentsParent);
 
-            float scale = Mathf.RoundToInt(Mathf.Lerp(_MinScale, _MaxScale, _Force));
-            spawnedSubMesh.transform.localScale = new Vector3(scale, scale, 25);
+            float holeX = Mathf.Lerp(25f, 80f, _Force);
+            float holeY = Mathf.Lerp(25f, 45f, _Force);
 
+            // clamp just in case
+            holeX = Mathf.Clamp(holeX, 25f, 80f);
+            holeY = Mathf.Clamp(holeY, 25f, 45f);
+
+            spawnedSubMesh.transform.localScale =
+                new Vector3(holeX, holeY, 25f);
+            spawnedSubMesh.transform.position = hitPoint;
+
+            Debug.Log("the posss: " + hitPoint + "  " + spawnedSubMesh.transform.position); 
             (_currentRemaning, _currentHole) =
                 _ProBuilderTool.CutHoleWithResult(wall, spawnedSubMesh);
 
             SpawnImpactParticles(hitPoint, hitNormal);
 
+            PositionImpactCameras(hitPoint, hitNormal);
+
             if (_currentHole != null)
                 ShatterRecursive(_currentHole, hitPoint, hitNormal, _Iterations);
+
+            _BombExplosion.Explode(_ExplosionRadius, _ExplosionForce, hitPoint);
+            Quaternion volumeRotation = Quaternion.LookRotation(-hitNormal, Vector3.up);
 
             _currentVolume = Instantiate(
                 _VolumeEffectParticleSys,
                 hitPoint,
-                Quaternion.identity
+                volumeRotation
             ).gameObject;
 
             float scaleValue = Mathf.Lerp(_MinVolume, _MaxVolume, _Force);
@@ -109,35 +133,50 @@ public class WallShatter : MonoBehaviour
         _CurrentWall.SetActive(true);
     }
 
+    private void PositionImpactCameras(Vector3 hitPoint, Vector3 hitNormal)
+    {
+        // Same rotation calculation you already use
+        float yRotation = Mathf.Atan2(hitNormal.x, hitNormal.z) * Mathf.Rad2Deg;
+        Quaternion rot = Quaternion.Euler(90f, yRotation, 0f);
+
+        // -------- TOP CAMERA --------
+        if (_TopCam != null)
+        {
+            Vector3 topPos = hitPoint + Vector3.up * _TopHeightOffset;
+
+            _TopCam.transform.position = topPos;
+            _TopCam.transform.rotation = rot;
+        }
+
+        // -------- SIDE CAMERA --------
+        if (_SideCam != null)
+        {
+            Vector3 sidePos = hitPoint;
+            if (Mathf.Abs(hitNormal.x) > Mathf.Abs(hitNormal.z))
+            {
+                sidePos += Vector3.forward * _SideDistance;
+            }
+            else
+            {
+                sidePos += Vector3.right * _SideDistance;
+            }
+
+            sidePos.y = hitPoint.y;
+            _SideCam.transform.position = sidePos;
+            _SideCam.transform.LookAt(hitPoint);
+        }
+    }
+
     private IEnumerator SlowMotionRoutine()
     {
-        float originalTimeScale = 1f;
-        float timer = 0f;
-
-        while (timer < 0.1f)
-        {
-            timer += Time.unscaledDeltaTime;
-            Time.timeScale =
-                Mathf.Lerp(originalTimeScale, _SlowMotionScale, timer / 0.1f);
-            Time.fixedDeltaTime = 0.02f * Time.timeScale;
-            yield return null;
-        }
+        // Lerp to slow motion
+        TimeManager.Instance.LerpTimeScale(_SlowMotionScale, 0.1f);
 
         yield return new WaitForSecondsRealtime(_SlowMotionDuration);
 
-        timer = 0f;
-
-        while (timer < 0.2f)
-        {
-            timer += Time.unscaledDeltaTime;
-            Time.timeScale =
-                Mathf.Lerp(_SlowMotionScale, originalTimeScale, timer / 0.2f);
-            Time.fixedDeltaTime = 0.02f * Time.timeScale;
-            yield return null;
-        }
-
-        Time.timeScale = 1f;
-        Time.fixedDeltaTime = 0.02f;
+        // Lerp back to normal if not paused
+        if (!TimeManager.Instance.IsPaused)
+            TimeManager.Instance.LerpTimeScale(1f, 0.2f);
     }
 
     private void ShatterRecursive(
@@ -174,20 +213,24 @@ public class WallShatter : MonoBehaviour
     {
         float yRotation = Mathf.Atan2(normal.x, normal.z) * Mathf.Rad2Deg;
 
-        Quaternion rot = Quaternion.Euler(90f, yRotation, 0f);
+        Quaternion rotation = Quaternion.Euler(90f, yRotation, 0f);
 
         if (_ExplodeParticleSys != null)
         {
-            ParticleSystem explode = Instantiate(_ExplodeParticleSys, position, rot);
-            explode.Play();
-            Destroy(explode.gameObject, explode.main.duration);
+            //ParticleSystem explode = Instantiate(_ExplodeParticleSys, position, rot);
+            _ExplodeParticleSys.transform.position = position;
+            _ExplodeParticleSys.transform.rotation = rotation;
+            _ExplodeParticleSys.Play();
+            Destroy(_ExplodeParticleSys.gameObject, _ExplodeParticleSys.main.duration);
         }
 
         if (_StonesParticleSys != null)
         {
-            ParticleSystem stones = Instantiate(_StonesParticleSys, position, rot);
-            stones.Play();
-            Destroy(stones.gameObject, stones.main.duration);
+            //ParticleSystem stones = Instantiate(_StonesParticleSys, position, rot);
+            _StonesParticleSys.transform.position = position;
+            _StonesParticleSys.transform.rotation = rotation;
+            _StonesParticleSys.Play();
+            Destroy(_StonesParticleSys.gameObject, _StonesParticleSys.main.duration);
         }
     }
 
@@ -195,34 +238,14 @@ public class WallShatter : MonoBehaviour
     {
         Rigidbody rb = piece.AddComponent<Rigidbody>();
         rb.mass = 1f;
-
         MeshCollider col = piece.AddComponent<MeshCollider>();
         col.convex = true;
-
-        // Small explosion spread
         rb.AddExplosionForce(_ExplosionForce, hitPoint, _ExplosionRadius);
-
-        // Direction away from wall (projectile direction)
         Vector3 impactDir = -hitNormal;
-
-        // Small randomness
         impactDir = (impactDir + Random.insideUnitSphere * 0.05f).normalized;
-
-        // Much smaller force
         float directionalForce = _ExplosionForce * 0.01f;
 
         rb.AddForce(impactDir * directionalForce, ForceMode.Impulse);
-    }
-
-    private void AddPhysics(GameObject piece, Vector3 hitPoint)
-    {
-        Rigidbody rb = piece.AddComponent<Rigidbody>();
-        rb.mass = 1f;
-
-        rb.AddExplosionForce(_ExplosionForce, hitPoint, _ExplosionRadius);
-
-        MeshCollider col = piece.AddComponent<MeshCollider>();
-        col.convex = true;
     }
 
     public void SetSettingsValues(
@@ -237,4 +260,17 @@ public class WallShatter : MonoBehaviour
         _ExplosionForce = explosionForce;
         _ExplosionRadius = explosionRadius;
     }
+
+    public void SetIsSlowMotion(bool value)
+    {
+        Debug.Log("set slow " + value);
+        _UseSlowMotion = value;
+    }
+
+    //public void SetSlowMotionValue(float value)
+    //{
+    //    Debug.Log("set slow " + value);
+    //    _SlowMotionScale = value;
+        
+    //}
 }
