@@ -36,40 +36,41 @@ public class ShatterUIController : MonoBehaviour
 
         // ---- PHYSICS EQUATION ----
 
-        float holeDiameter =
-            40f *
-            Mathf.Pow(explosiveKg / 0.3f, 1f / 3f) *
-            (20f / thicknessCm);
+        float explosiveFactor = explosiveKg / explosiveMin;
+        float wallFactor = thicknessMin / thicknessCm;
 
-        float blastRadius = holeDiameter * 0.5f;
+        float effectiveness = explosiveFactor * wallFactor;
+        effectiveness = Mathf.Clamp(effectiveness, 0.3f, 6f);
 
-        // normalize hole size for the wall script
-        float normalizedHole = Mathf.Clamp01(
-    Mathf.InverseLerp(20f, 120f, holeDiameter)
-);
+        // hole size
+        float holeDiameter = 40f * Mathf.Pow(effectiveness, 0.5f);
 
-        // iterations (more explosive + thinner wall)
+        // blast radius
+        float blastRadius = holeDiameter * 0.6f;
+
+        // explosion force
+        float explosionForce = 1000f * effectiveness;
+
+        // fragments
         int iterations = Mathf.Clamp(
-            Mathf.RoundToInt(
-                2 + 4 *
-                Mathf.Pow(explosiveKg / 0.3f, 1f / 3f) *
-                (20f / thicknessCm)
-            ),
+            Mathf.RoundToInt(2 + effectiveness * 1.5f),
             2,
             8
         );
 
-        float explosionForce = 1200f * explosiveKg;
+        // normalize hole
+        float normalizedHole = effectiveness / 6f;
+        normalizedHole = Mathf.Clamp01(normalizedHole);
 
         Debug.Log(
-    $"Explosive {explosiveKg}kg | Thickness {thicknessCm}cm | Hole {holeDiameter}cm | Norm {normalizedHole}"
-);
+        $"E:{explosiveKg}kg  T:{thicknessCm}cm  Eff:{effectiveness}  Hole:{holeDiameter}  Norm:{normalizedHole}"
+        );
 
         wallShatter.SetSettingsValues(
             normalizedHole,
             iterations,
             explosionForce,
-            blastRadius / 100f
+            blastRadius * 0.01f
         );
 
         ExplosionChange?.Invoke(Mathf.RoundToInt(explosiveKg * 1000));
