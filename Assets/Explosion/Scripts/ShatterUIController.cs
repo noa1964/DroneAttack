@@ -26,58 +26,70 @@ public class ShatterUIController : MonoBehaviour
         UpdateShatterValues(0);
     }
 
+    float Map(float value, float inMin, float inMax, float outMin, float outMax)
+    {
+        return outMin + (value - inMin) * (outMax - outMin) / (inMax - inMin);
+    }
+
     private void UpdateShatterValues(float value)
     {
-        float explosionSlider = _ExplosionSlider.GetCurrentValue() / 10f;
-        float thicknessSlider = _ThicknessSlider.GetCurrentValue() / 10f;
+        float explosiveGrams = Map(_ExplosionSlider.GetCurrentValue(), 0f, 10f, 200f, 2000f);
+        float wallThicknessCm = Map(_ThicknessSlider.GetCurrentValue(), 0f, 10f, 5f, 40f);
 
-        float explosiveKg = Mathf.Lerp(explosiveMin, explosiveMax, explosionSlider);
-        float thicknessCm = Mathf.Lerp(thicknessMin, thicknessMax, thicknessSlider);
+        float holeDiameter = CalculateHoleDiameter(explosiveGrams, wallThicknessCm);
+        float blastBehindWall = CalculateBlastBehindWall(explosiveGrams, wallThicknessCm);
 
-        // ---- PHYSICS EQUATION ----
 
-        float explosiveFactor = explosiveKg / explosiveMin;
-        float wallFactor = thicknessMin / thicknessCm;
+        float normalizedHole = Mathf.InverseLerp(27f, 62f, holeDiameter);
 
-        float effectiveness = explosiveFactor * wallFactor;
-        effectiveness = Mathf.Clamp(effectiveness, 0.3f, 6f);
-
-        // hole size
-        float holeDiameter = 40f * Mathf.Pow(effectiveness, 0.5f);
-
-        // blast radius
-        float blastRadius = holeDiameter * 0.6f;
-
-        // explosion force
-        float explosionForce = 1000f * effectiveness;
-
-        // fragments
         int iterations = Mathf.Clamp(
-            Mathf.RoundToInt(2 + effectiveness * 1.5f),
-            2,
-            8
+            Mathf.RoundToInt(Mathf.Lerp(5f, 15f, normalizedHole)),
+            5,
+            15
         );
 
-        // normalize hole
-        float normalizedHole = effectiveness / 6f;
-        normalizedHole = Mathf.Clamp01(normalizedHole);
+        float explosionForce = blastBehindWall * 1200f;
 
-        Debug.Log(
-        $"E:{explosiveKg}kg  T:{thicknessCm}cm  Eff:{effectiveness}  Hole:{holeDiameter}  Norm:{normalizedHole}"
-        );
+        float blastRadius = Mathf.Lerp(2f, 6f, blastBehindWall);
+        Debug.Log($"Blast Behind Wall: {blastBehindWall}  Hole Diameter: {holeDiameter} cm  Blast force {explosionForce}  Blast radius {blastRadius}");
 
         wallShatter.SetSettingsValues(
             normalizedHole,
             iterations,
             explosionForce,
-            blastRadius * 0.01f
+            blastRadius
         );
 
-        ExplosionChange?.Invoke(Mathf.RoundToInt(explosiveKg * 1000));
+        ExplosionChange?.Invoke(Mathf.RoundToInt(explosiveGrams));
     }
-
     public void OnResetPressed()
     {
         wallShatter.ResetWall();
     }
+
+
+    public float CalculateHoleDiameter(float explosiveGrams, float wallThicknessCm)
+    {
+        float E = explosiveGrams / 1000f;
+
+        float baseDiameter = 47f;
+        float hole = baseDiameter * Mathf.Pow(E, 1f / 3f);
+
+        float thicknessFactor = 1f - (wallThicknessCm / 100f);
+
+        hole *= thicknessFactor;
+
+        return Mathf.Clamp(hole, 27f, 62f);
+    }
+
+    public float CalculateBlastBehindWall(float explosiveGrams, float wallThicknessCm)
+    {
+        float E = explosiveGrams / 1000f;
+
+        float k = 0.07f;
+
+        return E * Mathf.Exp(-k * wallThicknessCm);
+    }
+
+
 }

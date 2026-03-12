@@ -49,6 +49,11 @@ public class Enemy : MonoBehaviour
         _animator = GetComponent<Animator>();
     }
 
+    private void Start()
+    {
+        SetRigidbodyState(true);
+        SetColliderState(false);
+    }
     public void Initialize(EnemyType enemy, WeaponType weapon, Transform trans)
     {
         _enemyType = enemy;
@@ -151,11 +156,14 @@ public class Enemy : MonoBehaviour
         // Stop all running coroutines (random walk etc)
         StopAllCoroutines();
 
-        // Trigger death animation
-        if (_animator != null)
-        {
-            _animator.SetTrigger("Dead");
-        }
+        //// Trigger death animation
+        //if (_animator != null)
+        //{
+        //    _animator.SetTrigger("Dead");
+        //}
+        _animator.enabled = false;
+        SetRigidbodyState(false);
+        SetColliderState(true);
 
     }
 
@@ -175,6 +183,29 @@ public class Enemy : MonoBehaviour
         }
 
         transform.rotation = targetRot;
+    }
+
+    private void SetRigidbodyState(bool state)
+    {
+        Rigidbody[] rigidbodies = GetComponentsInChildren<Rigidbody>();
+
+        foreach(Rigidbody rigidbody in rigidbodies)
+        {
+            rigidbody.isKinematic = state;
+        }
+
+        GetComponent<Rigidbody>().isKinematic = !state; 
+    }
+
+    private void SetColliderState(bool state)
+    {
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+
+        foreach (Collider collider in colliders)
+        {
+            collider.enabled = state;
+        }
+        GetComponent<Collider>().enabled= !state; 
     }
 
 }

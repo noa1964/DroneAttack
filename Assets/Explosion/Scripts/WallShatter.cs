@@ -14,7 +14,7 @@ public class WallShatter : MonoBehaviour
 
     [Header("Shatter Settings")]
     [SerializeField] private Material _CrossSectionMaterial;
-    [SerializeField] private float _Force = 0.5f;
+    [SerializeField] private float _HoleSize = 0.5f;
     [SerializeField] private int _Iterations = 4;
     [SerializeField] private float _ExplosionForce = 300f;
     [SerializeField] private float _ExplosionRadius = 2f;
@@ -80,8 +80,8 @@ public class WallShatter : MonoBehaviour
 
             spawnedSubMesh.transform.SetParent(_FragmentsParent);
 
-            float holeX = Mathf.Lerp(25f, 80f, _Force);
-            float holeY = Mathf.Lerp(25f, 45f, _Force);
+            float holeX = Mathf.Lerp(25f, 80f, _HoleSize);
+            float holeY = Mathf.Lerp(25f, 45f, _HoleSize);
 
             // clamp just in case
             holeX = Mathf.Clamp(holeX, 25f, 80f);
@@ -111,7 +111,7 @@ public class WallShatter : MonoBehaviour
                 volumeRotation
             ).gameObject;
 
-            float scaleValue = Mathf.Lerp(_MinVolume, _MaxVolume, _Force);
+            float scaleValue = Mathf.Lerp(_MinVolume, _MaxVolume, _HoleSize);
             _currentVolume.transform.localScale =
                 new Vector3(scaleValue, scaleValue, scaleValue);
         }
@@ -249,13 +249,13 @@ public class WallShatter : MonoBehaviour
     }
 
     public void SetSettingsValues(
-        float force,
+        float hole,
         int iterations,
         float explosionForce,
         float explosionRadius
     )
     {
-        _Force = force;
+        _HoleSize = hole;
         _Iterations = iterations;
         _ExplosionForce = explosionForce;
         _ExplosionRadius = explosionRadius;
@@ -271,6 +271,9 @@ public class WallShatter : MonoBehaviour
     //{
     //    Debug.Log("set slow " + value);
     //    _SlowMotionScale = value;
-        
+
     //}
+
+
+
 }

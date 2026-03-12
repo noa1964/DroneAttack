@@ -11,16 +11,19 @@ public class BombExplosion : MonoBehaviour
 
     public void Explode(float radius, float force, Vector3 pos)
     {
-        // Find everything in radius
+        // Find everything in the explosion radius
         Collider[] hits = Physics.OverlapSphere(pos, radius, affectedLayers);
+        Debug.Log("Hit count: " + hits.Length);
 
-        Debug.Log("count : " + hits.Length);
         foreach (Collider hit in hits)
         {
             Rigidbody rb = hit.GetComponent<Rigidbody>();
-
             if (rb != null)
             {
+                // Optional: add upward lift for more realistic push
+                float upwardsModifier = 1f;
+
+                Debug.Log($"force {force} pos {pos} radius: {radius} up: {upwardsModifier}");
                 rb.AddExplosionForce(
                     force,
                     pos,
@@ -29,11 +32,12 @@ public class BombExplosion : MonoBehaviour
                     ForceMode.Impulse
                 );
 
+                // Handle enemies
                 Enemy enemy = hit.GetComponent<Enemy>();
                 if (enemy != null)
                 {
                     enemy.Die();
-                    StartCoroutine(PushEnemy(rb));
+                    //StartCoroutine(PushEnemy(rb));
                 }
             }
         }
@@ -41,7 +45,7 @@ public class BombExplosion : MonoBehaviour
 
     private IEnumerator PushEnemy(Rigidbody rb)
     {
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(1f);
         if (rb != null)
         {
             rb.velocity = Vector3.zero;
