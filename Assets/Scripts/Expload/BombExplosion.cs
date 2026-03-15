@@ -8,11 +8,12 @@ public class BombExplosion : MonoBehaviour
     public float upwardsModifier = 1.5f;
 
     public LayerMask affectedLayers;
+    public Rigidbody rigi;
 
     public void Explode(float radius, float force, Vector3 pos)
     {
         // Find everything in the explosion radius
-        Collider[] hits = Physics.OverlapSphere(pos, radius, affectedLayers);
+        Collider[] hits = Physics.OverlapSphere(pos, radius*12, affectedLayers);
         Debug.Log("Hit count: " + hits.Length);
 
         foreach (Collider hit in hits)
@@ -21,37 +22,53 @@ public class BombExplosion : MonoBehaviour
             if (rb != null)
             {
                 // Optional: add upward lift for more realistic push
-                float upwardsModifier = 1f;
+                //float upwardsModifier = 1f;
 
                 Debug.Log($"force {force} pos {pos} radius: {radius} up: {upwardsModifier}");
-                rb.AddExplosionForce(
-                    force,
-                    pos,
-                    radius,
-                    upwardsModifier,
-                    ForceMode.Impulse
-                );
 
-                // Handle enemies
-                Enemy enemy = hit.GetComponent<Enemy>();
+                //rb.AddExplosionForce(
+                //    10000,
+                //    pos,
+                //    100,
+                //    upwardsModifier,
+                //    ForceMode.Impulse
+                //);
+
+                Enemy enemy = hit.GetComponentInParent<Enemy>();
                 if (enemy != null)
                 {
-                    enemy.Die();
-                    //StartCoroutine(PushEnemy(rb));
+                    Debug.Log("Dieeeeeeeeeeeeeeee " + enemy.gameObject.name);
+                    enemy.gameObject.GetComponent<Animator>().enabled = false;
+                    rb.AddExplosionForce(
+                        10000,
+                        pos,
+                        100,
+                        upwardsModifier,
+                        ForceMode.Impulse
+                    );
+
+                    //enemy.Die();
+                    StartCoroutine(PushEnemy(enemy));
+                    //enemy.ApplyExplosionForce(400, pos, 50, upwardsModifier);
                 }
+                // Handle enemies
             }
         }
     }
 
-    private IEnumerator PushEnemy(Rigidbody rb)
+    public void Explode(Transform trans)
     {
-        yield return new WaitForSeconds(1f);
-        if (rb != null)
-        {
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            rb.isKinematic = true;
-        }
+        rigi.AddExplosionForce(400,
+                    trans.position,
+                    60,
+                    upwardsModifier,
+                    ForceMode.Impulse);
+    }
+
+    private IEnumerator PushEnemy(Enemy enemy)
+    {
+        yield return new WaitForSeconds(0.5f);
+        enemy.Die();
 
     }
     // Optional: explode automatically

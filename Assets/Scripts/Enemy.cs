@@ -145,7 +145,6 @@ public class Enemy : MonoBehaviour
 
         _isDead = true;
 
-        // Stop navigation
         if (_agent != null)
         {
             _agent.isStopped = true;
@@ -153,18 +152,37 @@ public class Enemy : MonoBehaviour
             _agent.enabled = false;
         }
 
-        // Stop all running coroutines (random walk etc)
         StopAllCoroutines();
 
-        //// Trigger death animation
-        //if (_animator != null)
-        //{
-        //    _animator.SetTrigger("Dead");
-        //}
         _animator.enabled = false;
-        SetRigidbodyState(false);
-        SetColliderState(true);
 
+        SetRigidbodyState(false);   // enable ragdoll
+        SetColliderState(true);     // enable bone colliders
+    }
+
+
+    public void ApplyExplosionForce(float force, Vector3 position, float radius, float upwards)
+    {
+        StartCoroutine(ApplyExplosionForceRoutine(force, position, radius, upwards));
+    }
+
+    private IEnumerator ApplyExplosionForceRoutine(float force, Vector3 position, float radius, float upwards)
+    {
+        // wait one physics frame so ragdoll fully activates
+        yield return new WaitForFixedUpdate();
+
+        Rigidbody[] rbs = GetComponentsInChildren<Rigidbody>();
+
+        foreach (Rigidbody rb in rbs)
+        {
+            rb.AddExplosionForce(
+                force,
+                position,
+                radius,
+                upwards,
+                ForceMode.Impulse
+            );
+        }
     }
 
     private IEnumerator RotateToTarget()
@@ -196,6 +214,24 @@ public class Enemy : MonoBehaviour
 
         GetComponent<Rigidbody>().isKinematic = !state; 
     }
+    private void SetRigidbodyForce(float force, Vector3 pos, float radius)
+    {
+        Rigidbody[] rigidbodies = GetComponentsInChildren<Rigidbody>();
+
+        foreach (Rigidbody rb in rigidbodies)
+        {
+            rb.AddExplosionForce(
+                force,
+                pos,
+                radius,
+                1,
+                ForceMode.Impulse
+            );
+        }
+
+        //GetComponent<Rigidbody>().isKinematic = !state;
+    }
+
 
     private void SetColliderState(bool state)
     {
@@ -207,6 +243,7 @@ public class Enemy : MonoBehaviour
         }
         GetComponent<Collider>().enabled= !state; 
     }
+
 
 }
 
