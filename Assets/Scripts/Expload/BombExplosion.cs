@@ -12,46 +12,20 @@ public class BombExplosion : MonoBehaviour
 
     public void Explode(float radius, float force, Vector3 pos)
     {
-        // Find everything in the explosion radius
-        Collider[] hits = Physics.OverlapSphere(pos, radius*12, affectedLayers);
-        Debug.Log("Hit count: " + hits.Length);
+        radius *= 10;
+        Collider[] hits = Physics.OverlapSphere(pos, radius, affectedLayers);
+        Debug.Log("Hit count: " + hits.Length +  " " + force + "  " + radius);
 
         foreach (Collider hit in hits)
         {
             Rigidbody rb = hit.GetComponent<Rigidbody>();
-            if (rb != null)
+            if (rb == null) continue;
+
+            Enemy enemy = hit.GetComponentInParent<Enemy>();
+            if (enemy != null)
             {
-                // Optional: add upward lift for more realistic push
-                //float upwardsModifier = 1f;
-
-                Debug.Log($"force {force} pos {pos} radius: {radius} up: {upwardsModifier}");
-
-                //rb.AddExplosionForce(
-                //    10000,
-                //    pos,
-                //    100,
-                //    upwardsModifier,
-                //    ForceMode.Impulse
-                //);
-
-                Enemy enemy = hit.GetComponentInParent<Enemy>();
-                if (enemy != null)
-                {
-                    Debug.Log("Dieeeeeeeeeeeeeeee " + enemy.gameObject.name);
-                    enemy.gameObject.GetComponent<Animator>().enabled = false;
-                    rb.AddExplosionForce(
-                        10000,
-                        pos,
-                        100,
-                        upwardsModifier,
-                        ForceMode.Impulse
-                    );
-
-                    //enemy.Die();
-                    StartCoroutine(PushEnemy(enemy));
-                    //enemy.ApplyExplosionForce(400, pos, 50, upwardsModifier);
-                }
-                // Handle enemies
+                enemy.gameObject.GetComponent<Animator>().enabled = false;
+                StartCoroutine(PushEnemy(enemy, rb, pos, force, radius));
             }
         }
     }
@@ -65,11 +39,20 @@ public class BombExplosion : MonoBehaviour
                     ForceMode.Impulse);
     }
 
-    private IEnumerator PushEnemy(Enemy enemy)
+    private IEnumerator PushEnemy(Enemy enemy, Rigidbody rb, Vector3 pos, float force, float radius)
     {
-        yield return new WaitForSeconds(0.5f);
-        enemy.Die();
+        yield return new WaitForSeconds(0.1f);
 
+        rb.AddExplosionForce(
+            force,
+            pos,
+            radius,
+            upwardsModifier,
+            ForceMode.Impulse
+        );
+
+        yield return new WaitForSeconds(0.05f);
+        enemy.Die();
     }
     // Optional: explode automatically
     void Start()
