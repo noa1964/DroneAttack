@@ -80,18 +80,17 @@ public class WallShatter : MonoBehaviour
 
             spawnedSubMesh.transform.SetParent(_FragmentsParent);
 
-            float holeX = Mathf.Lerp(25f, 80f, _HoleSize);
-            float holeY = Mathf.Lerp(25f, 45f, _HoleSize);
+            float holeX = Mathf.Lerp(0.6f, 2f, _HoleSize);
+            float holeY = Mathf.Lerp(0.6f, 1.5f, _HoleSize);
 
             // clamp just in case
-            holeX = Mathf.Clamp(holeX, 25f, 80f);
-            holeY = Mathf.Clamp(holeY, 25f, 45f);
+            holeX = Mathf.Clamp(holeX, 0.2f, 2f);
+            holeY = Mathf.Clamp(holeY, 0.2f, 1.5f);
 
             spawnedSubMesh.transform.localScale =
-                new Vector3(holeX, holeY, 25f);
+                new Vector3(holeX, holeY, 2f);
             spawnedSubMesh.transform.position = hitPoint;
 
-            Debug.Log("the posss: " + hitPoint + "  " + spawnedSubMesh.transform.position); 
             (_currentRemaning, _currentHole) =
                 _ProBuilderTool.CutHoleWithResult(wall, spawnedSubMesh);
 

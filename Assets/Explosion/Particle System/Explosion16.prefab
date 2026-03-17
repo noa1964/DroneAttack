@@ -4934,6 +4934,7 @@ MonoBehaviour:
   ps: {fileID: 8742426597379261703}
   minSizeRange: {x: 0.01, y: 0.2}
   maxSizeRange: {x: 0.2, y: 0.6}
+  xValueRange: {x: 1.5, y: 2.5}
   minSpeedRange: {x: 1, y: 5}
   maxSpeedRange: {x: 5, y: 30}
   minEmission: 10
@@ -9858,6 +9859,7 @@ MonoBehaviour:
   ps: {fileID: 5040885997577823623}
   minSizeRange: {x: 2, y: 4}
   maxSizeRange: {x: 5, y: 7}
+  xValueRange: {x: 1.5, y: 2.5}
   minSpeedRange: {x: 1, y: 5}
   maxSpeedRange: {x: 5, y: 25}
   minEmission: 10
@@ -14782,6 +14784,7 @@ MonoBehaviour:
   ps: {fileID: 3503382241932962932}
   minSizeRange: {x: 1, y: 3}
   maxSizeRange: {x: 3, y: 7}
+  xValueRange: {x: 1.5, y: 2.5}
   minSpeedRange: {x: 0.1, y: 0.5}
   maxSpeedRange: {x: 0.3, y: 2.5}
   minEmission: 1
@@ -19706,6 +19709,7 @@ MonoBehaviour:
   ps: {fileID: 2738987256422665063}
   minSizeRange: {x: 0.01, y: 0.02}
   maxSizeRange: {x: 0.03, y: 0.07}
+  xValueRange: {x: 1.5, y: 2.5}
   minSpeedRange: {x: 0.5, y: 0.7}
   maxSpeedRange: {x: 1.5, y: 2.5}
   minEmission: 20
@@ -24645,6 +24649,7 @@ MonoBehaviour:
   ps: {fileID: 742003616999873452}
   minSizeRange: {x: 1, y: 4}
   maxSizeRange: {x: 2, y: 7}
+  xValueRange: {x: 1.5, y: 2.5}
   minSpeedRange: {x: 0.2, y: 0.5}
   maxSpeedRange: {x: 0.4, y: 2.5}
   minEmission: 1
@@ -29569,6 +29574,7 @@ MonoBehaviour:
   ps: {fileID: 5941238393380058230}
   minSizeRange: {x: 0.5, y: 1}
   maxSizeRange: {x: 2, y: 3}
+  xValueRange: {x: 1.5, y: 2.5}
   minSpeedRange: {x: 0.2, y: 0.5}
   maxSpeedRange: {x: 1.5, y: 2.5}
   minEmission: 5
@@ -34502,6 +34508,7 @@ MonoBehaviour:
   ps: {fileID: 6820874716047495686}
   minSizeRange: {x: 0.5, y: 4}
   maxSizeRange: {x: 3, y: 7}
+  xValueRange: {x: 1.5, y: 2.5}
   minSpeedRange: {x: 0.1, y: 0.5}
   maxSpeedRange: {x: 0.3, y: 2.5}
   minEmission: 1

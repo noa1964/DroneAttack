@@ -33,7 +33,6 @@ public class Ground : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("click on ground");
         Ray ray = PlacementManager.Instance.GetCamera().ScreenPointToRay(eventData.position);
 
         if (Physics.Raycast(ray, out RaycastHit hit))

@@ -8,6 +8,8 @@ public class ParticleController : MonoBehaviour
     [SerializeField] private Vector2 minSizeRange = new Vector2(0.2f, 0.5f);
     [SerializeField] private Vector2 maxSizeRange = new Vector2(1.5f, 2.5f);
 
+    [SerializeField] private Vector2 xValueRange = new Vector2(1.5f, 2.5f);
+
     [Header("Speed Range (X = min, Y = max)")]
     [SerializeField] private Vector2 minSpeedRange = new Vector2(0.2f, 0.5f);
     [SerializeField] private Vector2 maxSpeedRange = new Vector2(1.5f, 2.5f);
@@ -50,6 +52,9 @@ public class ParticleController : MonoBehaviour
         var main = ps.main;
         main.startSize = new ParticleSystem.MinMaxCurve(sizeMin, sizeMax);
 
+        //float xValue = Mathf.Lerp(xValueRange.x, xValueRange.y, t);
+        //Vector3 currentPos = transform.position;
+        //transform.position = new Vector3(xValue , currentPos.y, currentPos.z);
         // ===== START SPEED =====
         float speedMin = Mathf.Lerp(minSpeedRange.x, maxSpeedRange.x, t);
         float speedMax = Mathf.Lerp(minSpeedRange.y, maxSpeedRange.y, t);

@@ -26,8 +26,6 @@ public class Floor : MonoBehaviour
 
     public void SetWallsCollider(bool isCollider)
     {
-        Debug.Log(" building " + transform.parent.name);
-        Debug.Log(" walls " + walls.transform.name);
         walls.enabled = isCollider;
     }
      

@@ -48,10 +48,10 @@ public class ShatterUIController : MonoBehaviour
             15
         );
 
-        float explosionForce = blastBehindWall * 1200f;
+        float explosionForce = blastBehindWall * 2500f;
 
         float blastRadius = Mathf.Lerp(2f, 6f, blastBehindWall);
-        Debug.Log($"Blast Behind Wall: {blastBehindWall}  Hole Diameter: {holeDiameter} cm  Blast force {explosionForce}  Blast radius {blastRadius}");
+        //Debug.Log($"Blast Behind Wall: {blastBehindWall}  Hole Diameter: {holeDiameter} cm  Blast force {explosionForce}  Blast radius {blastRadius}");
 
         wallShatter.SetSettingsValues(
             normalizedHole,
