@@ -42,6 +42,7 @@ public class ShatterUIController : MonoBehaviour
 
         float normalizedHole = Mathf.InverseLerp(27f, 62f, holeDiameter);
 
+        Debug.Log(" hole " + holeDiameter + "  " + normalizedHole);
         int iterations = Mathf.Clamp(
             Mathf.RoundToInt(Mathf.Lerp(5f, 15f, normalizedHole)),
             5,
@@ -72,7 +73,7 @@ public class ShatterUIController : MonoBehaviour
     {
         float E = explosiveGrams / 1000f;
 
-        float baseDiameter = 47f;
+        float baseDiameter = 37f;
         float hole = baseDiameter * Mathf.Pow(E, 1f / 3f);
 
         float thicknessFactor = 1f - (wallThicknessCm / 100f);

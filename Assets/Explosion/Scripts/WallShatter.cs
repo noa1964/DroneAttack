@@ -40,7 +40,10 @@ public class WallShatter : MonoBehaviour
     [Header("Impact Cameras")]
     [SerializeField] private Camera _TopCam;
     [SerializeField] private Camera _SideCam;
+    [SerializeField] private Camera _ImpactCam;
 
+    [SerializeField] private float _ImpactCamDistance = 1.5f;
+    [SerializeField] private float _ImpactCamHeight = 0.3f;
     [SerializeField] private float _TopHeightOffset = 1.5f;
     [SerializeField] private float _SideDistance = 2.5f;
     [SerializeField] private float _SideHeight = 0.5f;
@@ -80,12 +83,12 @@ public class WallShatter : MonoBehaviour
 
             spawnedSubMesh.transform.SetParent(_FragmentsParent);
 
-            float holeX = Mathf.Lerp(0.6f, 2f, _HoleSize);
-            float holeY = Mathf.Lerp(0.6f, 1.5f, _HoleSize);
+            float holeX = Mathf.Lerp(0.6f, 1.4f, _HoleSize);
+            float holeY = Mathf.Lerp(0.45f, 1.1f, _HoleSize);
 
-            // clamp just in case
-            holeX = Mathf.Clamp(holeX, 0.2f, 2f);
-            holeY = Mathf.Clamp(holeY, 0.2f, 1.5f);
+            //// clamp just in case
+            //holeX = Mathf.Clamp(holeX, 0.2f, 2f);
+            //holeY = Mathf.Clamp(holeY, 0.2f, 1.5f);
 
             spawnedSubMesh.transform.localScale =
                 new Vector3(holeX, holeY, 2f);
@@ -99,7 +102,9 @@ public class WallShatter : MonoBehaviour
             PositionImpactCameras(hitPoint, hitNormal);
 
             if (_currentHole != null)
+            {
                 ShatterRecursive(_currentHole, hitPoint, hitNormal, _Iterations);
+            }
 
             _BombExplosion.Explode(_ExplosionRadius, _ExplosionForce, hitPoint);
             Quaternion volumeRotation = Quaternion.LookRotation(-hitNormal, Vector3.up);
@@ -164,6 +169,23 @@ public class WallShatter : MonoBehaviour
             _SideCam.transform.position = sidePos;
             _SideCam.transform.LookAt(hitPoint);
         }
+
+        // -------- ENEMIES CAMERA --------
+        if (_ImpactCam != null)
+        {
+
+            Vector3 explosionDir = -hitNormal;
+
+            // Position camera slightly BACK from explosion
+            Vector3 camPos = hitPoint
+                - explosionDir * _ImpactCamDistance   // move backward
+                + Vector3.up * _ImpactCamHeight;      // slight height
+
+            _ImpactCam.transform.position = camPos;
+
+            // Look toward explosion direction
+            _ImpactCam.transform.rotation = Quaternion.LookRotation(explosionDir, Vector3.up);
+        }
     }
 
     private IEnumerator SlowMotionRoutine()
@@ -186,7 +208,6 @@ public class WallShatter : MonoBehaviour
     )
     {
         if (iterationsLeft <= 0) return;
-
         Vector3 planeOrigin = hitPoint + Random.insideUnitSphere;
         Vector3 planeNormal = Random.onUnitSphere;
 
