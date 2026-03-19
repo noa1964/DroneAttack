@@ -87,7 +87,7 @@ public class EnemyManager : MonoBehaviour
             }
         }
 
-        Debug.Log("done spwaining");
+        //Debug.Log("done spwaining");
         _EnemyCamHandler.Initialize(_enemies);
     }
 

@@ -108,6 +108,8 @@ public class WallShatter : MonoBehaviour
 
             _BombExplosion.Explode(_ExplosionRadius, _ExplosionForce, hitPoint);
             Quaternion volumeRotation = Quaternion.LookRotation(-hitNormal, Vector3.up);
+            var main = _VolumeEffectParticleSys.main;
+            main.startLifetime = _ExplosionRadius;
 
             _currentVolume = Instantiate(
                 _VolumeEffectParticleSys,
@@ -115,9 +117,10 @@ public class WallShatter : MonoBehaviour
                 volumeRotation
             ).gameObject;
 
-            float scaleValue = Mathf.Lerp(_MinVolume, _MaxVolume, _HoleSize);
-            _currentVolume.transform.localScale =
-                new Vector3(scaleValue, scaleValue, scaleValue);
+            _currentVolume.transform.position = new Vector3(hitPoint.x - 2, 0.5f, hitPoint.z);
+            _currentVolume.GetComponent<ParticleSystem>().Pause();
+            //main = _currentVolume.GetComponent<ParticleSystem>().main;
+            //main.startLifetime = _ExplosionRadius;
         }
     }
 
@@ -141,15 +144,15 @@ public class WallShatter : MonoBehaviour
     {
         // Same rotation calculation you already use
         float yRotation = Mathf.Atan2(hitNormal.x, hitNormal.z) * Mathf.Rad2Deg;
-        Quaternion rot = Quaternion.Euler(90f, yRotation, 0f);
+        Quaternion rot = Quaternion.Euler(90f, yRotation, 90f);
 
         // -------- TOP CAMERA --------
         if (_TopCam != null)
         {
-            Vector3 topPos = hitPoint + Vector3.up * _TopHeightOffset;
+            Vector3 topPos = hitPoint + Vector3.up * _TopHeightOffset - (new Vector3(3,0,0));
 
             _TopCam.transform.position = topPos;
-            _TopCam.transform.rotation = rot;
+            //_TopCam.transform.rotation = rot;
         }
 
         // -------- SIDE CAMERA --------
@@ -214,7 +217,18 @@ public class WallShatter : MonoBehaviour
         GameObject[] slices =
             obj.SliceInstantiate(planeOrigin, planeNormal, _CrossSectionMaterial);
 
-        if (slices == null) return;
+        if (slices == null)
+        {
+            if (!obj.TryGetComponent<Rigidbody>(out _))
+            {
+                Rigidbody rb = obj.AddComponent<Rigidbody>();
+                Vector3 forceDirection = Vector3.forward; // replace with the direction you want
+                float forceAmount = 500; // adjust as needed
+                rb.AddForce(forceDirection * forceAmount, ForceMode.Impulse);
+            }
+
+            return;
+        }
 
         foreach (GameObject piece in slices)
         {

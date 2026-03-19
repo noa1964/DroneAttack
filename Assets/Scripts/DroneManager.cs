@@ -54,6 +54,7 @@ public class DroneManager : MonoBehaviour
         }
 
         _UICameras.SetActive(true);
+        UIManager.Instance.SetEnemyPanelActive(false);
         // Spawn the drone
         Projectile drone = Instantiate(
             dronePrefab,

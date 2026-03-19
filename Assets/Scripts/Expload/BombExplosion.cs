@@ -14,7 +14,6 @@ public class BombExplosion : MonoBehaviour
     {
         radius *= 10;
         Collider[] hits = Physics.OverlapSphere(pos, radius, affectedLayers);
-        Debug.Log("Hit count: " + hits.Length +  " " + force + "  " + radius);
 
         foreach (Collider hit in hits)
         {

@@ -21,7 +21,7 @@ public class PlacementManager : MonoBehaviour
     // Track dots per floor
     private Dictionary<Ground, List<GameObject>> _dotsPerFloor = new Dictionary<Ground, List<GameObject>>();
 
-
+    
     public static Action<Building> SelectedBuildingUpdate;
 
     private void OnEnable()
@@ -121,7 +121,11 @@ public class PlacementManager : MonoBehaviour
         return _dotsPerFloor;
     }
 
-
+    public bool HasAnyDot()
+    {
+        // Check each floor's list for at least one dot
+        return _dotsPerFloor.Values.Any(list => list.Count > 0);
+    }
 
     public Camera GetCamera()
     {

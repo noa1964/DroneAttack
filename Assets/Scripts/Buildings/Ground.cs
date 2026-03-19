@@ -37,7 +37,12 @@ public class Ground : MonoBehaviour, IPointerClickHandler
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            PlacementManager.Instance.TryPlaceOnFloor(this, hit.point);
+                    Vector3 point = hit.point;
+        point.y = _collider.bounds.center.y; // or transform.position.y if you prefer
+
+        Debug.Log("Clicked point (with fixed Y): " + point);
+
+        PlacementManager.Instance.TryPlaceOnFloor(this, point);
         }
     }
 

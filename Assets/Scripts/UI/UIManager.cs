@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TabsManager _TabsManager;
     [SerializeField] private List<SimulationTab> _SimulationTabs;
 
+    [SerializeField] private GameObject _EnemyViewPanel;
     [Header("Pause Button")]
     [SerializeField] private Button pauseButton;
     [SerializeField] private Image pauseButtonImage;
@@ -61,6 +62,11 @@ public class UIManager : MonoBehaviour
 
         if (pauseButtonImage != null)
             pauseButtonImage.sprite = isPaused ? playSprite : pauseSprite;
+    }
+
+    public void SetEnemyPanelActive(bool active)
+    {
+        _EnemyViewPanel.SetActive(active);
     }
 }
 

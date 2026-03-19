@@ -123,9 +123,12 @@ public class PlacementUIHandler : MonoBehaviour
 
     public void ConfirmBtn()
     {
-        _PanleRef.SetActive(false);
-        Debug.Log("start simulation");
-        HumanSimulationManager.StartSimulation?.Invoke();
+        if (PlacementManager.Instance.HasAnyDot())
+        {
+            _PanleRef.SetActive(false);
+            Debug.Log("start simulation");
+            HumanSimulationManager.StartSimulation?.Invoke();
+        }
     }
 
     public EnemyType GetSelectedEnemyType()

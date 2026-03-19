@@ -13,7 +13,7 @@ public class Projectile : MonoBehaviour
 
     private bool isDestroy = false;
 
-    private Vector3 targetPoint;
+    private Vector3 targetPoint = new Vector3(58f, 7f, -11f);
     private Vector3 moveDirection;
     private bool reachedTarget = false;
     private bool hasTarget = false;
@@ -29,30 +29,53 @@ public class Projectile : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Stop movement if destroyed or no target
         if (isDestroy || !hasTarget)
             return;
 
         if (!reachedTarget)
         {
             Vector3 dir = targetPoint - transform.position;
+            float distance = dir.magnitude;
 
-            if (dir.magnitude <= stopThreshold)
+            // Check if we've reached target
+            if (distance <= stopThreshold)
             {
                 reachedTarget = true;
-                moveDirection = dir.normalized;
+                rb.velocity = Vector3.zero;
+                return;
             }
-            else
+
+            moveDirection = dir.normalized;
+
+            // --- Smooth slowing ---
+            // Slow down when within 3 units of target
+            float slowDistance = 3f;
+            float speedMultiplier = 1f;
+
+            if (distance < slowDistance)
             {
-                moveDirection = dir.normalized;
+                // Use a smoother curve: squared
+                float t = Mathf.Clamp01(distance / slowDistance);
+                speedMultiplier = Mathf.Sqrt(t); // gentler slow down
+            }
+
+            rb.velocity = moveDirection * speed * speedMultiplier;
+
+            // --- Lean forward ---
+            // Tilt the projectile along the movement direction
+            if (rb.velocity.sqrMagnitude > 0.01f)
+            {
+                // --- Lean forward in the opposite direction ---
+                Quaternion targetRotation = Quaternion.LookRotation(rb.velocity);
+
+                // Optional: tilt slightly backward along X if you want "opposite lean"
+                float leanAngle = Mathf.Lerp(0, 30f, 1 - speedMultiplier); // adjust max angle
+                targetRotation *= Quaternion.Euler(-leanAngle, 0, 0); // negative = backward
+
+                // Smoothly rotate toward velocity
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.fixedDeltaTime * 5f);
             }
         }
-
-        rb.velocity = moveDirection * speed;
-
-        // Rotate projectile toward movement
-        if (rb.velocity.sqrMagnitude > 0.01f)
-            transform.rotation = Quaternion.LookRotation(rb.velocity);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -79,7 +102,7 @@ public class Projectile : MonoBehaviour
                 hitNormal
             );
 
-            StartCoroutine(DeactivateAfterDelay(0.2f));
+            StartCoroutine(DeactivateAfterDelay(0.1f));
         }
     }
 
