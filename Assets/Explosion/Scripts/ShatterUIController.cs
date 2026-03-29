@@ -16,7 +16,7 @@ public class ShatterUIController : MonoBehaviour
     [SerializeField] private float thicknessMin = 5f;   // cm
     [SerializeField] private float thicknessMax = 40f;  // cm
 
-    public static Action<int> ExplosionChange;
+    public static Action<int, float> ExplosionChange;
 
     private void Start()
     {
@@ -73,7 +73,7 @@ public class ShatterUIController : MonoBehaviour
             blastRadius
         );
 
-        ExplosionChange?.Invoke(Mathf.RoundToInt(explosiveGrams));
+        ExplosionChange?.Invoke(Mathf.RoundToInt(explosiveGrams), blastRadius);
     }
     public void OnResetPressed()
     {

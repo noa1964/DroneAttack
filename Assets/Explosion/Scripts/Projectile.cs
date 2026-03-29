@@ -80,6 +80,7 @@ public class Projectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+            Debug.Log("collide " + collision.gameObject.name +  " " + collision.gameObject.tag + "  " + isDestroy);
         if (collision.gameObject.CompareTag("Wall") && !isDestroy)
         {
             isDestroy = true;

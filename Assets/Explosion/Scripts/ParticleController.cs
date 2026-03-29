@@ -18,6 +18,11 @@ public class ParticleController : MonoBehaviour
     [SerializeField] private int minEmission = 5;
     [SerializeField] private int maxEmission = 20;
 
+    [Header("Size")]
+    [SerializeField] private bool isChangedSize = false;
+    [SerializeField] private float minSize = 0.3f;
+    [SerializeField] private float maxSize = 0.66f;
+
     [Header("Color Range")]
     [SerializeField] private Color minColorLow = Color.yellow;
     [SerializeField] private Color minColorHigh = new Color(1f, 0.5f, 0f);
@@ -39,7 +44,7 @@ public class ParticleController : MonoBehaviour
     /// Updates particle system based on intensity (1–10)
     /// Applies start size, start speed, and emission burst count
     /// </summary>
-    public void UpdateParticlesByIntensity(int intensity)
+    public void UpdateParticlesByIntensity(int intensity, float radius)
     {
         intensity = Mathf.Clamp(intensity, 1, 10);
 
@@ -74,6 +79,13 @@ public class ParticleController : MonoBehaviour
             int newCount = Mathf.RoundToInt(Mathf.Lerp(minEmission, maxEmission, t));
             burst.count = newCount;
             emission.SetBurst(0, burst);
+        }
+
+        if (isChangedSize)
+        {
+            float normalized = (radius - 1f) / (9f - 1f); // maps 1-9 to 0-1
+            float size = Mathf.Lerp(minSize, maxSize, normalized);
+            transform.localScale = new Vector3(size, size, size);
         }
     }
 }
