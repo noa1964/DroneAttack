@@ -6,7 +6,7 @@ public class EnemyManager : MonoBehaviour
 {
     [SerializeField] private List<EnemyInfo> _EnemiesPrefab;
     [SerializeField] private EnemyCamHandler _EnemyCamHandler;
-    private Dictionary<Ground, List<GameObject>> _EnemyDotInfos = new Dictionary<Ground, List<GameObject>>();
+    private Dictionary<Ground, List<DotInfo>> _EnemyDotInfos = new Dictionary<Ground, List<DotInfo>>();
 
     private List<Enemy> _enemies = new List<Enemy>();
     private void OnEnable()
@@ -50,7 +50,7 @@ public class EnemyManager : MonoBehaviour
         foreach (var kvp in _EnemyDotInfos)
         {
             Ground ground = kvp.Key;
-            List<GameObject> dotList = kvp.Value;
+            List<DotInfo> dotList = kvp.Value;
 
             // Get all possible end points on this ground
             List<Transform> possiblePoints = new List<Transform>(ground.GetPossibleEndPoints());
@@ -65,7 +65,7 @@ public class EnemyManager : MonoBehaviour
 
             for (int i = 0; i < dotList.Count; i++)
             {
-                GameObject dotObj = dotList[i];
+                GameObject dotObj = dotList[i].Dot;
                 PlacementDot dot = dotObj.GetComponent<PlacementDot>();
                 if (dot == null) continue;
 
@@ -74,7 +74,7 @@ public class EnemyManager : MonoBehaviour
 
                 EnemyType type = dot.GetEnemyType();
                 // Instantiate enemy at the dot's world position (or at target point if you want)
-                GameObject obj = Instantiate(GetEnemy(type), dotObj.transform.position, Quaternion.identity);
+                GameObject obj = Instantiate(GetEnemy(type), dotList[i].Position, Quaternion.identity);
 
                 Enemy enemy = obj.GetComponent<Enemy>();
                 enemy.gameObject.name = "Enemy_" + index;

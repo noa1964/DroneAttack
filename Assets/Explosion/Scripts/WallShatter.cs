@@ -117,10 +117,18 @@ public class WallShatter : MonoBehaviour
                 volumeRotation
             ).gameObject;
 
-            _currentVolume.transform.position = new Vector3(hitPoint.x - 2, 0.5f, hitPoint.z);
+            float height = 0;
+            if (HumanSimulationManager.Instance != null)
+            {
+                height = HumanSimulationManager.Instance.GetHeightUpViewItems();
+                HumanSimulationManager.Instance.SetBuldingUpView();
+            }
+            _currentVolume.transform.position = new Vector3(hitPoint.x - 2, (0.5f + height), hitPoint.z);
             _currentVolume.GetComponent<ParticleSystem>().Pause();
             //main = _currentVolume.GetComponent<ParticleSystem>().main;
             //main.startLifetime = _ExplosionRadius;
+            CarShatter.ShatterObjs?.Invoke(hitPoint, hitNormal,_ExplosionForce, _ExplosionRadius);
+
         }
     }
 
@@ -151,7 +159,7 @@ public class WallShatter : MonoBehaviour
         {
             Vector3 topPos = hitPoint + Vector3.up * _TopHeightOffset - (new Vector3(3,0,0));
 
-            _TopCam.transform.position = topPos;
+            //_TopCam.transform.position = topPos;
             //_TopCam.transform.rotation = rot;
         }
 

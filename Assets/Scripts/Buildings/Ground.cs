@@ -42,7 +42,7 @@ public class Ground : MonoBehaviour, IPointerClickHandler
 
         Debug.Log("Clicked point (with fixed Y): " + point);
 
-        PlacementManager.Instance.TryPlaceOnFloor(this, point);
+        PlacementManager.Instance.TryPlaceOnFloor(this, point, hit.point);
         }
     }
 

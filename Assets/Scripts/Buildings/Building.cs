@@ -33,6 +33,11 @@ public class Building : MonoBehaviour, IPointerClickHandler
         {
             _Floors[i].SetSelectable(i == index);
             _Floors[i].floorObj.SetActive(i == index);
+            if (i == index)
+            {
+                HumanSimulationManager.Instance.SetSelectedFloor(_Floors[i]);
+
+            }
         }
     }
 

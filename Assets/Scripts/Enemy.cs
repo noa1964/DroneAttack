@@ -61,22 +61,22 @@ public class Enemy : MonoBehaviour
         _weaponType = weapon;
 
         SetWeapon();
-        StartCoroutine(RandomWalkThenGoToTarget());
+        //StartCoroutine(RandomWalkThenGoToTarget());
     }
 
     private void Update()
     {
         if (_isDead) return;
 
-        if (_goingToFinalTarget && !_reachedFinalPoint)
-        {
-            if (!_agent.pathPending &&
-                _agent.remainingDistance <= _agent.stoppingDistance &&
-                (!_agent.hasPath || _agent.velocity.sqrMagnitude == 0f))
-            {
-                OnReachedTarget();
-            }
-        }
+        //if (_goingToFinalTarget && !_reachedFinalPoint)
+        //{
+        //    if (!_agent.pathPending &&
+        //        _agent.remainingDistance <= _agent.stoppingDistance &&
+        //        (!_agent.hasPath || _agent.velocity.sqrMagnitude == 0f))
+        //    {
+        //        OnReachedTarget();
+        //    }
+        //}
     }
 
     private void SetWeapon()

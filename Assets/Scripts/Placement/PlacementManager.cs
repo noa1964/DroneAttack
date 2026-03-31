@@ -19,8 +19,9 @@ public class PlacementManager : MonoBehaviour
     [SerializeField] private Camera _PlacementCamera;
     [SerializeField] private Camera _MainCamera;
     // Track dots per floor
-    private Dictionary<Ground, List<GameObject>> _dotsPerFloor = new Dictionary<Ground, List<GameObject>>();
+    private Dictionary<Ground, List<DotInfo>> _dotsPerFloor = new Dictionary<Ground, List<DotInfo>>();
 
+    private List<GameObject> _displayDots;
     
     public static Action<Building> SelectedBuildingUpdate;
 
@@ -62,13 +63,13 @@ public class PlacementManager : MonoBehaviour
         _activeFloor = ground;
     }
 
-    public void TryPlaceOnFloor(Ground ground, Vector3 worldPosition)
+    public void TryPlaceOnFloor(Ground ground, Vector3 worldPosition, Vector3 point)
     {
         if (_selectedBuilding == null || _activeFloor == null || ground != _activeFloor)
             return;
 
         if (!_dotsPerFloor.ContainsKey(ground))
-            _dotsPerFloor[ground] = new List<GameObject>();
+            _dotsPerFloor[ground] = new List<DotInfo>();
 
         if (_dotsPerFloor[ground].Count >= maxDotsPerFloor)
         {
@@ -77,23 +78,21 @@ public class PlacementManager : MonoBehaviour
         }
 
         // Spawn dot
-        GameObject dot = Instantiate(dotPrefab, worldPosition, Quaternion.identity);
+        //GameObject dotDisplay = Instantiate(dotPrefab, point, Quaternion.identity);
+        GameObject dot = Instantiate(dotPrefab, point, Quaternion.identity);
         var dotScript = dot.GetComponent<PlacementDot>();
         if (dotScript != null)
             dotScript.Initialize(_PlacementCamera, _PlacementUIHandler.GetSelectedEnemyType(), _PlacementUIHandler.GetSelectedWeaponType(), _activeFloor.gameObject);
 
-        _dotsPerFloor[ground].Add(dot);
+        //_displayDots.Add(dotDisplay);
+        _dotsPerFloor[ground].Add(new DotInfo (dot, worldPosition));
     }
 
     public void RemoveDot(PlacementDot dot)
     {
         foreach (var kvp in _dotsPerFloor)
         {
-            if (kvp.Value.Contains(dot.gameObject))
-            {
-                kvp.Value.Remove(dot.gameObject);
-                break;
-            }
+            kvp.Value.RemoveAll(d => d.Dot == dot.gameObject);
         }
     }
 
@@ -103,20 +102,20 @@ public class PlacementManager : MonoBehaviour
         _PlacementCamera.gameObject.SetActive(false);
     }
 
-    public List<GameObject> GetDots(Ground ground)
+    public List<DotInfo> GetDots(Ground ground)
     {
         if (!_dotsPerFloor.ContainsKey(ground))
-            return new List<GameObject>();
+            return new List<DotInfo>();
 
         return _dotsPerFloor[ground];
     }
 
-    public List<GameObject> GetAllDotsPositions()
+    public List<DotInfo> GetAllDotsPositions()
     {
         return _dotsPerFloor.Values.SelectMany(list => list).ToList();
     }
 
-    public Dictionary<Ground, List<GameObject>> GetDictionaryDots()
+    public Dictionary<Ground, List<DotInfo>> GetDictionaryDots()
     {
         return _dotsPerFloor;
     }
@@ -131,4 +130,17 @@ public class PlacementManager : MonoBehaviour
     {
         return _PlacementCamera;
     }
+}
+
+public class DotInfo
+{
+    public GameObject Dot { get; private set; }
+    public Vector3 Position { get; private set; }
+
+    public DotInfo(GameObject dot, Vector3 position)
+    {
+        Dot = dot;
+        Position = position;
+    }
+
 }
