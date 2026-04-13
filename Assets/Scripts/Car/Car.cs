@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 public class Car : MonoBehaviour, IPointerClickHandler
 {
     // Store the last clicked point on the building after simulation starts
+
+    [SerializeField] private GameObject _Windows;
     public static Vector3 lastClickedPoint;
 
     // Track whether simulation has started
