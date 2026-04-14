@@ -1,70 +1,129 @@
 ﻿using System;
 using UnityEngine;
 
+/// <summary>
+/// Reads two UI sliders (explosive amount and wall thickness), maps them to
+/// physical values, computes hole diameter and blast intensity, and applies
+/// those values to a `WallShatter` instance. Exposes an event for UI updates.
+/// </summary>
 public class ShatterUIController : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private WallShatter wallShatter;
 
     [Header("Sliders")]
-    [SerializeField] private SliderWithLabel _ExplosionSlider;   // 0-10
-    [SerializeField] private SliderWithLabel _ThicknessSlider;   // 0-10
+    [SerializeField] private SliderWithLabel _ExplosionSlider;   // slider value range (see _SliderValueMin/_SliderValueMax)
+    [SerializeField] private SliderWithLabel _ThicknessSlider;   // slider value range (see _SliderValueMin/_SliderValueMax)
 
-    [Header("Real Ranges")]
-    [SerializeField] private float explosiveMin = 200f; // kg (200g)
-    [SerializeField] private float explosiveMax = 2000f;   // kg (2kg)
+    [Header("Slider value range (if sliders are normalized)")]
+    [SerializeField] private float _SliderValueMin = 1f;
+    [SerializeField] private float _SliderValueMax = 10f;
 
-    [SerializeField] private float thicknessMin = 5f;   // cm
-    [SerializeField] private float thicknessMax = 40f;  // cm
+    [Header("Real Ranges (physical units)")]
+    [Tooltip("Explosive mass range (grams)")]
+    [SerializeField] private float explosiveMin = 200f;
+    [SerializeField] private float explosiveMax = 2000f;
 
+    [Tooltip("Wall thickness range (centimeters)")]
+    [SerializeField] private float thicknessMin = 5f;
+    [SerializeField] private float thicknessMax = 40f;
+
+    [Header("Hole mapping")]
+    [SerializeField] private float holeBaseDiameter = 37f; // base scaling constant used in diameter calculation
+    [SerializeField] private float holeOutputMin = 27f; // final hole diameter min (cm)
+    [SerializeField] private float holeOutputMax = 62f; // final hole diameter max (cm)
+    [SerializeField, Range(0.1f, 3f)] private float holeCurveExponent = 1.5f;
+
+    [Header("Blast mapping")]
+    [SerializeField] private float blastK = 0.09f; // attenuation factor used in exponential model
+    [SerializeField] private float blastMappedMin = 0.1f;
+    [SerializeField] private float blastMappedMax = 1f;
+    [SerializeField] private float blastToForceScale = 2500f;
+    [SerializeField, Range(0.1f, 3f)] private float blastNonLinearPower = 0.8f; // controls radius curve
+    [SerializeField] private float blastRadiusMin = 1f;
+    [SerializeField] private float blastRadiusMax = 9f;
+
+    [Header("Fragment iterations")]
+    [SerializeField] private int iterationsMin = 5;
+    [SerializeField] private int iterationsMax = 15;
+
+    /// <summary>
+    /// (explosive grams rounded, blastRadius)
+    /// </summary>
     public static Action<int, float> ExplosionChange;
+
+    private void OnEnable()
+    {
+        if (_ExplosionSlider != null)
+            _ExplosionSlider.OnValueChanged += UpdateShatterValues;
+        if (_ThicknessSlider != null)
+            _ThicknessSlider.OnValueChanged += UpdateShatterValues;
+
+        // initialize UI -> logic
+        UpdateShatterValues(0f);
+    }
+
+    private void OnDisable()
+    {
+        if (_ExplosionSlider != null)
+            _ExplosionSlider.OnValueChanged -= UpdateShatterValues;
+        if (_ThicknessSlider != null)
+            _ThicknessSlider.OnValueChanged -= UpdateShatterValues;
+    }
 
     private void Start()
     {
-        _ExplosionSlider.OnValueChanged += UpdateShatterValues;
-        _ThicknessSlider.OnValueChanged += UpdateShatterValues;
+        if (wallShatter == null)
+            Debug.LogWarning("ShatterUIController: `wallShatter` is not assigned.", this);
 
-        UpdateShatterValues(0);
+        if (_ExplosionSlider == null || _ThicknessSlider == null)
+            Debug.LogWarning("ShatterUIController: one or more sliders are not assigned.", this);
     }
 
-    float Map(float value, float inMin, float inMax, float outMin, float outMax)
+    private static float Map(float value, float inMin, float inMax, float outMin, float outMax)
     {
+        if (Mathf.Approximately(inMax, inMin))
+            return outMin;
         return outMin + (value - inMin) * (outMax - outMin) / (inMax - inMin);
     }
 
-    private void UpdateShatterValues(float value)
+    /// <summary>
+    /// UI change handler. The incoming float comes from the slider event but we
+    /// read both sliders to compute the mapped physical values.
+    /// </summary>
+    private void UpdateShatterValues(float _)
     {
-        float explosiveGrams = /*Map(*/_ExplosionSlider.GetCurrentValue()/*, 1f, 10f, explosiveMin, explosiveMax)*/;
-        float wallThicknessCm = /*Map(*/_ThicknessSlider.GetCurrentValue()/*, 1f, 10f, thicknessMin, thicknessMax)*/;
+        if (wallShatter == null) return; // nothing to apply to
 
-        float holeDiameter = CalculateHoleDiameter(explosiveGrams, wallThicknessCm);
-        float blastBehindWall = CalculateBlastBehindWall(explosiveGrams, wallThicknessCm);
+        // Read raw slider values
+        float sliderExplosiveValue = _ExplosionSlider != null ? _ExplosionSlider.GetCurrentValue() : explosiveMin;
+        float sliderThicknessValue = _ThicknessSlider != null ? _ThicknessSlider.GetCurrentValue() : thicknessMin;
 
-        float normalizedHole = Mathf.InverseLerp(27f, 62f, holeDiameter);
+        // Convert slider units to physical units (grams and cm).
+        // If sliders already supply physical units, set _SliderValueMin/_SliderValueMax accordingly.
+        //float wallThicknessCm = Map(sliderThicknessValue, _SliderValueMin, _SliderValueMax, thicknessMin, thicknessMax);
 
-        // --- RADIUS CALCULATION START ---
-        
-        // 1. Get the raw intensity from your existing exponential function (0 to 1)
-        float intensity = blastBehindWall; 
+        // Compute hole diameter and blast intensity
+        float holeDiameter = CalculateHoleDiameter(sliderExplosiveValue, sliderThicknessValue);
+        float blastBehindWall = CalculateBlastBehindWall(sliderExplosiveValue, sliderThicknessValue);
 
-        // 2. Apply a Power function to make it non-linear. 
-        // A value of 0.75 makes the radius grow quickly at first, then slow down.
-        // A value of 1.5 would make it stay small longer and then "explode" at the end.
-        float nonLinearFactor = Mathf.Pow(intensity, 0.8f); 
+        // Normalize hole within expected final diameter range
+        float normalizedHole = Mathf.InverseLerp(holeOutputMin, holeOutputMax, holeDiameter);
 
-        // 3. Map that factor to your 1-9 range
-        float blastRadius = Mathf.Lerp(1f, 9f, nonLinearFactor);
+        // Compute blast radius with a gentle non-linear curve
+        float intensity = Mathf.Clamp01(blastBehindWall);
+        float nonLinearFactor = Mathf.Pow(intensity, blastNonLinearPower);
+        float blastRadius = Mathf.Lerp(blastRadiusMin, blastRadiusMax, nonLinearFactor);
 
-        // --- RADIUS CALCULATION END ---
-
+        // Iteration count depends on hole size (more hole -> more fragments)
         int iterations = Mathf.Clamp(
-            Mathf.RoundToInt(Mathf.Lerp(5f, 15f, normalizedHole)),
-            5,
-            15
+            Mathf.RoundToInt(Mathf.Lerp(iterationsMin, iterationsMax, normalizedHole)),
+            iterationsMin,
+            iterationsMax
         );
 
-        float explosionForce = blastBehindWall * 2500f;
-
-        //Debug.Log($" Hole Diameter: {holeDiameter} Hole normalll: {normalizedHole} ");
+        // Explosion force scales from mapped blast value
+        float explosionForce = blastBehindWall * blastToForceScale;
 
         wallShatter.SetSettingsValues(
             normalizedHole,
@@ -73,6 +132,8 @@ public class ShatterUIController : MonoBehaviour
             blastRadius
         );
 
+        float explosiveGrams = Map(sliderExplosiveValue, explosiveMin, explosiveMax, _SliderValueMin, _SliderValueMax);
+       
         ExplosionChange?.Invoke(Mathf.RoundToInt(explosiveGrams), blastRadius);
     }
     public void OnResetPressed()
@@ -83,32 +144,42 @@ public class ShatterUIController : MonoBehaviour
 
     public float CalculateHoleDiameter(float explosiveGrams, float wallThicknessCm)
     {
-        // 1. Convert explosive to kg
-        float E = explosiveGrams / 1000f;
+        // New behavior:
+        // - Thickness controls sensitivity and max cap.
+        // - Thick wall -> explosive is very sensitive (steep response) but max capped ~80%.
+        // - Thin wall  -> explosive is weak (flat response) but can reach full 100%.
+        // Implementation maps inputs to normalized 0..1 and composes baseline + explosive effect scaled by cap.
 
-        // 2. Base factor for calculation (like before)
-        float baseDiameter = 37f;
+        // Normalize thickness and explosive to 0..1
+        float thicknessNorm = Mathf.InverseLerp(thicknessMin, thicknessMax, wallThicknessCm);
+        thicknessNorm = Mathf.Clamp01(thicknessNorm);
 
-        // --- Compute min and max possible holes ---
-        float E_min = explosiveMin / 1000f;
-        float E_max = explosiveMax / 1000f;
+        float explosiveNorm = Mathf.InverseLerp(explosiveMin, explosiveMax, explosiveGrams);
+        explosiveNorm = Mathf.Clamp01(explosiveNorm);
 
-        float minHole = baseDiameter * Mathf.Pow(E_min, 1f / 3f) * (1f - (thicknessMax / 100f));
-        float maxHole = baseDiameter * Mathf.Pow(E_max, 1f / 3f) * (1f - (thicknessMin / 100f));
+        // Baseline hole (when explosive is minimum):
+        // thin wall -> baseline ~50% of range, thick wall -> baseline ~0%
+        float baselineNormalized = Mathf.Lerp(0.5f, 0f, thicknessNorm);
 
-        // 3. Compute current hole
-        float currentHole = baseDiameter * Mathf.Pow(E, 1f / 3f) * (1f - (wallThicknessCm / 100f));
+        // Max cap (normalized): thin -> 1.0 (100%), thick -> 0.8 (80%)
+        float capNormalized = Mathf.Lerp(1f, 0.8f, thicknessNorm);
 
-        // 4. Normalize between min and max
-        float normalized = (currentHole - minHole) / (maxHole - minHole);
-        normalized = Mathf.Clamp01(normalized);
+        // Sensitivity exponent: thin -> flat (~0.4), thick -> steep (~3.0)
+        const float minExponent = 0.4f;
+        const float maxExponent = 3.0f;
+        // Use serialized holeCurveExponent (0.1..3) as an additional tuning weight
+        float curveWeight = Mathf.InverseLerp(0.1f, 3f, holeCurveExponent);
+        float exponent = Mathf.Lerp(minExponent, maxExponent, thicknessNorm * curveWeight);
 
-        // 5. Apply non-linear curve
-        float curved = Mathf.Pow(normalized, 1.5f);
+        // Apply non-linear response to explosive slider
+        float explosiveEffect = Mathf.Pow(explosiveNorm, exponent);
 
-        // 6. Map to actual hole size
-        float holeDiameter = Mathf.Lerp(27f, 62f, curved);
+        // Compose final normalized hole within [baseline, cap]
+        float holeNormalized = baselineNormalized + (capNormalized - baselineNormalized) * explosiveEffect;
+        holeNormalized = Mathf.Clamp01(holeNormalized);
 
+        // Map normalized hole to actual diameter range
+        float holeDiameter = Mathf.Lerp(holeOutputMin, holeOutputMax, holeNormalized);
         return holeDiameter;
     }
 

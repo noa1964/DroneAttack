@@ -86,10 +86,6 @@ public class WallShatter : MonoBehaviour
             float holeX = Mathf.Lerp(0.6f, 1.4f, _HoleSize);
             float holeY = Mathf.Lerp(0.45f, 1.1f, _HoleSize);
 
-            //// clamp just in case
-            //holeX = Mathf.Clamp(holeX, 0.2f, 2f);
-            //holeY = Mathf.Clamp(holeY, 0.2f, 1.5f);
-
             spawnedSubMesh.transform.localScale =
                 new Vector3(holeX, holeY, 2f);
             spawnedSubMesh.transform.position = hitPoint;
@@ -106,29 +102,32 @@ public class WallShatter : MonoBehaviour
                 ShatterRecursive(_currentHole, hitPoint, hitNormal, _Iterations);
             }
 
-            _BombExplosion.Explode(_ExplosionRadius, _ExplosionForce, hitPoint);
-            Quaternion volumeRotation = Quaternion.LookRotation(-hitNormal, Vector3.up);
-            var main = _VolumeEffectParticleSys.main;
-            main.startLifetime = _ExplosionRadius;
+            if (_BombExplosion != null)
+                _BombExplosion.Explode(_ExplosionRadius, _ExplosionForce, hitPoint);
 
-            _currentVolume = Instantiate(
-                _VolumeEffectParticleSys,
-                hitPoint,
-                volumeRotation
-            ).gameObject;
-
-            float height = 0;
-            if (HumanSimulationManager.Instance != null)
+            if (_VolumeEffectParticleSys != null)
             {
-                height = HumanSimulationManager.Instance.GetHeightUpViewItems();
-                HumanSimulationManager.Instance.SetBuldingUpView();
-            }
-            _currentVolume.transform.position = new Vector3(hitPoint.x - 2, (0.5f + height), hitPoint.z);
-            _currentVolume.GetComponent<ParticleSystem>().Pause();
-            //main = _currentVolume.GetComponent<ParticleSystem>().main;
-            //main.startLifetime = _ExplosionRadius;
-            CarShatter.ShatterObjs?.Invoke(hitPoint, hitNormal,_ExplosionForce, _ExplosionRadius);
+                Quaternion volumeRotation = Quaternion.LookRotation(-hitNormal, Vector3.up);
+                var main = _VolumeEffectParticleSys.main;
+                main.startLifetime = _ExplosionRadius;
 
+                _currentVolume = Instantiate(
+                    _VolumeEffectParticleSys,
+                    hitPoint,
+                    volumeRotation
+                ).gameObject;
+
+                float height = 0;
+                if (HumanSimulationManager.Instance != null)
+                {
+                    height = HumanSimulationManager.Instance.GetHeightUpViewItems();
+                    HumanSimulationManager.Instance.SetBuldingUpView();
+                }
+                _currentVolume.transform.position = new Vector3(hitPoint.x - 2, (0.5f + height), hitPoint.z);
+                _currentVolume.GetComponent<ParticleSystem>().Pause();
+            }
+
+            CarShatter.ShatterObjs?.Invoke(hitPoint, hitNormal,_ExplosionForce, _ExplosionRadius);
         }
     }
 
@@ -150,20 +149,14 @@ public class WallShatter : MonoBehaviour
 
     private void PositionImpactCameras(Vector3 hitPoint, Vector3 hitNormal)
     {
-        // Same rotation calculation you already use
         float yRotation = Mathf.Atan2(hitNormal.x, hitNormal.z) * Mathf.Rad2Deg;
         Quaternion rot = Quaternion.Euler(90f, yRotation, 90f);
 
-        // -------- TOP CAMERA --------
         if (_TopCam != null)
         {
             Vector3 topPos = hitPoint + Vector3.up * _TopHeightOffset - (new Vector3(3,0,0));
-
-            //_TopCam.transform.position = topPos;
-            //_TopCam.transform.rotation = rot;
         }
 
-        // -------- SIDE CAMERA --------
         if (_SideCam != null)
         {
             Vector3 sidePos = hitPoint;
@@ -181,32 +174,24 @@ public class WallShatter : MonoBehaviour
             _SideCam.transform.LookAt(hitPoint);
         }
 
-        // -------- ENEMIES CAMERA --------
         if (_ImpactCam != null)
         {
-
             Vector3 explosionDir = -hitNormal;
-
-            // Position camera slightly BACK from explosion
             Vector3 camPos = hitPoint
-                - explosionDir * _ImpactCamDistance   // move backward
-                + Vector3.up * _ImpactCamHeight;      // slight height
+                - explosionDir * _ImpactCamDistance
+                + Vector3.up * _ImpactCamHeight;
 
             _ImpactCam.transform.position = camPos;
-
-            // Look toward explosion direction
             _ImpactCam.transform.rotation = Quaternion.LookRotation(explosionDir, Vector3.up);
         }
     }
 
     private IEnumerator SlowMotionRoutine()
     {
-        // Lerp to slow motion
         TimeManager.Instance.LerpTimeScale(_SlowMotionScale, 0.1f);
 
         yield return new WaitForSecondsRealtime(_SlowMotionDuration);
 
-        // Lerp back to normal if not paused
         if (!TimeManager.Instance.IsPaused)
             TimeManager.Instance.LerpTimeScale(1f, 0.2f);
     }
@@ -230,8 +215,8 @@ public class WallShatter : MonoBehaviour
             if (!obj.TryGetComponent<Rigidbody>(out _))
             {
                 Rigidbody rb = obj.AddComponent<Rigidbody>();
-                Vector3 forceDirection = Vector3.forward; // replace with the direction you want
-                float forceAmount = 500; // adjust as needed
+                Vector3 forceDirection = Vector3.forward;
+                float forceAmount = 500;
                 rb.AddForce(forceDirection * forceAmount, ForceMode.Impulse);
             }
 
@@ -246,42 +231,48 @@ public class WallShatter : MonoBehaviour
             ShatterRecursive(piece, hitPoint, hitNormal, iterationsLeft - 1);
         }
 
-        //SpawnImpactParticles(hitPoint, hitNormal);
-
         obj.SetActive(false);
     }
 
     private void SpawnImpactParticles(Vector3 position, Vector3 normal)
     {
         float yRotation = Mathf.Atan2(normal.x, normal.z) * Mathf.Rad2Deg;
-
         Quaternion rotation = Quaternion.Euler(90f, yRotation, 0f);
 
         if (_ExplodeParticleSys != null)
         {
-            //ParticleSystem explode = Instantiate(_ExplodeParticleSys, position, rot);
-            _ExplodeParticleSys.transform.position = position;
-            _ExplodeParticleSys.transform.rotation = rotation;
-            _ExplodeParticleSys.Play();
-            Destroy(_ExplodeParticleSys.gameObject, _ExplodeParticleSys.main.duration);
+            var instance = Instantiate(_ExplodeParticleSys, position, rotation);
+            instance.Play();
+            Destroy(instance.gameObject, instance.main.duration + 0.1f);
         }
 
         if (_StonesParticleSys != null)
         {
-            //ParticleSystem stones = Instantiate(_StonesParticleSys, position, rot);
-            _StonesParticleSys.transform.position = position;
-            _StonesParticleSys.transform.rotation = rotation;
-            _StonesParticleSys.Play();
-            Destroy(_StonesParticleSys.gameObject, _StonesParticleSys.main.duration);
+            var instance = Instantiate(_StonesParticleSys, position, rotation);
+            instance.Play();
+            Destroy(instance.gameObject, instance.main.duration + 0.1f);
         }
     }
 
     private void AddPhysics(GameObject piece, Vector3 hitPoint, Vector3 hitNormal)
     {
-        Rigidbody rb = piece.AddComponent<Rigidbody>();
+        // Reuse existing RB/Collider if present
+        if (!piece.TryGetComponent<Rigidbody>(out Rigidbody rb))
+        {
+            rb = piece.AddComponent<Rigidbody>();
+        }
         rb.mass = 1f;
-        MeshCollider col = piece.AddComponent<MeshCollider>();
-        col.convex = true;
+
+        if (!piece.TryGetComponent<MeshCollider>(out MeshCollider col))
+        {
+            col = piece.AddComponent<MeshCollider>();
+            col.convex = true;
+        }
+        else
+        {
+            col.convex = true;
+        }
+
         rb.AddExplosionForce(_ExplosionForce, hitPoint, _ExplosionRadius);
         Vector3 impactDir = -hitNormal;
         impactDir = (impactDir + Random.insideUnitSphere * 0.05f).normalized;
@@ -308,14 +299,4 @@ public class WallShatter : MonoBehaviour
         Debug.Log("set slow " + value);
         _UseSlowMotion = value;
     }
-
-    //public void SetSlowMotionValue(float value)
-    //{
-    //    Debug.Log("set slow " + value);
-    //    _SlowMotionScale = value;
-
-    //}
-
-
-
 }

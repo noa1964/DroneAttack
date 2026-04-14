@@ -46,7 +46,6 @@ public class ParticleController : MonoBehaviour
     /// </summary>
     public void UpdateParticlesByIntensity(int intensity, float radius)
     {
-        intensity = Mathf.Clamp(intensity, 1, 10);
 
         // Normalize 1–10 to 0–1
         float t = (intensity - 1) / 9f;
