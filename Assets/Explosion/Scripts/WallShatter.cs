@@ -48,7 +48,7 @@ public class WallShatter : MonoBehaviour
     [SerializeField] private float _SideDistance = 2.5f;
     [SerializeField] private float _SideHeight = 0.5f;
 
-    [Header("Explosion")]
+    [Header("Explosion")] [SerializeField] private Camera _TopCamera;
     [SerializeField] private BombExplosion _BombExplosion;
     private Vector3 _originalPosition;
     private Quaternion _originalRotation;
@@ -58,6 +58,11 @@ public class WallShatter : MonoBehaviour
     private GameObject _currentRemaning;
 
     private GameObject _CurrentWall;
+
+    [Header("Deformation (mesh)")]
+    [SerializeField] private float _DeformForceMultiplier = 0.008f; // scale applied to _ExplosionForce
+    [SerializeField] private float _InwardScaleMin = 0.05f;        // smallest indentation
+    [SerializeField] private float _InwardScaleMax = 0.1f;        // largest indentation
 
     private void Start()
     {
@@ -93,9 +98,16 @@ public class WallShatter : MonoBehaviour
             (_currentRemaning, _currentHole) =
                 _ProBuilderTool.CutHoleWithResult(wall, spawnedSubMesh);
 
+            // Add MeshDeformer to the remaining piece and apply a small permanent inward deformation at the hit point.
+            if (_currentRemaning != null)
+            {
+                StartCoroutine(EnsurePermanentDeformation(_currentRemaning, hitPoint));
+            }
+
             SpawnImpactParticles(hitPoint, hitNormal);
 
             PositionImpactCameras(hitPoint, hitNormal);
+            
 
             if (_currentHole != null)
             {
@@ -128,6 +140,29 @@ public class WallShatter : MonoBehaviour
             }
 
             CarShatter.ShatterObjs?.Invoke(hitPoint, hitNormal,_ExplosionForce, _ExplosionRadius);
+        }
+    }
+
+    // Coroutine ensures MeshDeformer has initialized before applying permanent deformation.
+    private IEnumerator EnsurePermanentDeformation(GameObject target, Vector3 worldHitPoint)
+    {
+        // Add or get MeshDeformer
+        if (!target.TryGetComponent<MeshDeformer>(out MeshDeformer deformer))
+        {
+            deformer = target.AddComponent<MeshDeformer>();
+            deformer.springForce = 20f;
+            deformer.damping = 5f;
+        }
+
+        // Wait a frame so MeshDeformer.Start() initializes mesh arrays
+        yield return null;
+
+        if (deformer != null)
+        {
+            // Reduced deformation force for subtle effect
+            float deformForce = Mathf.Clamp(_ExplosionForce * _DeformForceMultiplier, 1f, 100f);
+            float inwardScale = Mathf.Lerp(_InwardScaleMin, _InwardScaleMax, Mathf.Clamp01(_HoleSize));
+            deformer.ApplyPermanentDeformation(worldHitPoint, deformForce, inwardScale);
         }
     }
 

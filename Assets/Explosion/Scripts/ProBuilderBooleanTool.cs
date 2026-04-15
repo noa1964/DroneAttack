@@ -37,6 +37,12 @@ public class ProBuilderBooleanTool : MonoBehaviour
         baseCopy.transform.localScale = baseMesh.transform.lossyScale;
         baseCopy.name = baseMesh.name + "_WithHole";
 
+        // Create an unparented world-space copy of the subtractive mesh to ensure correct transforms
+        GameObject subCopy = Instantiate(subtractiveMesh, subtractiveMesh.transform.position, subtractiveMesh.transform.rotation);
+        subCopy.transform.localScale = subtractiveMesh.transform.lossyScale;
+        subCopy.transform.SetParent(null);
+        subCopy.name = subtractiveMesh.name + "_CSGCopy";
+
         // --- 1) Removed piece (intersection) ---
         GameObject removedPart = new GameObject(baseMesh.name + "_RemovedPart");
         removedPart.transform.SetParent(fragmentsParent);
@@ -44,7 +50,7 @@ public class ProBuilderBooleanTool : MonoBehaviour
         removedPart.transform.rotation = Quaternion.identity;
         removedPart.layer = Mathf.RoundToInt(Mathf.Log(defaultLayer.value, 2));
 
-        Model intersectModel = CSG.Intersect(baseCopy, subtractiveMesh);
+        Model intersectModel = CSG.Intersect(baseCopy, subCopy);
         if (intersectModel != null && intersectModel.mesh != null)
         {
             removedPart.AddComponent<MeshFilter>().sharedMesh = intersectModel.mesh;
@@ -57,23 +63,59 @@ public class ProBuilderBooleanTool : MonoBehaviour
         }
 
         // --- 2) Remaining base mesh (subtract hole) ---
-        Model subtractedModel = CSG.Subtract(baseCopy, subtractiveMesh);
+        Model subtractedModel = CSG.Subtract(baseCopy, subCopy);
 
-        GameObject remainingMesh = new GameObject(baseMesh.name + "_Remaining");
-        remainingMesh.transform.SetParent(fragmentsParent);
-        remainingMesh.transform.position = Vector3.zero;
-        remainingMesh.transform.rotation = Quaternion.identity;
-        remainingMesh.layer = Mathf.RoundToInt(Mathf.Log(defaultLayer.value, 2));
+        GameObject remainingMesh = null;
+        if (subtractedModel != null && subtractedModel.mesh != null)
+        {
+            remainingMesh = new GameObject(baseMesh.name + "_Remaining");
+            remainingMesh.transform.SetParent(fragmentsParent);
+            remainingMesh.transform.position = Vector3.zero;
+            remainingMesh.transform.rotation = Quaternion.identity;
+            remainingMesh.layer = Mathf.RoundToInt(Mathf.Log(defaultLayer.value, 2));
 
-        remainingMesh.AddComponent<MeshFilter>().sharedMesh = subtractedModel.mesh;
-        remainingMesh.AddComponent<MeshRenderer>().sharedMaterials = subtractedModel.materials.ToArray();
+            remainingMesh.AddComponent<MeshFilter>().sharedMesh = subtractedModel.mesh;
+            remainingMesh.AddComponent<MeshRenderer>().sharedMaterials = subtractedModel.materials.ToArray();
+        }
+        else
+        {
+            Debug.LogWarning($"CSG.Subtract returned null or empty mesh for '{baseMesh.name}' with subtractor '{subtractiveMesh.name}'.")
+;
+        }
 
         // Hide original base mesh
         baseMesh.SetActive(false);
 
+        // Clean up temporary copies
         Destroy(baseCopy);
+        Destroy(subCopy);
+
+        // Sanity check: sometimes CSG can produce unexpectedly large 'removed' piece.
+        // Ensure the removed part is the smaller fragment; if it's larger than the remaining piece, swap.
+        if (remainingMesh != null && removedPart != null)
+        {
+            float remVol = ComputeMeshVolumeSafe(remainingMesh.GetComponent<MeshFilter>()?.sharedMesh, remainingMesh.transform.lossyScale);
+            float remPartVol = ComputeMeshVolumeSafe(removedPart.GetComponent<MeshFilter>()?.sharedMesh, removedPart.transform.lossyScale);
+
+
+            if (remPartVol > remVol * 1.1f) // if removed is significantly larger than remaining, swap them
+            {
+                Debug.LogWarning("[ProBuilderBooleanTool] Detected removed part larger than remaining part — swapping tuple to preserve semantics.");
+                var tmp = remainingMesh;
+                remainingMesh = removedPart;
+                removedPart = tmp;
+            }
+        }
 
         return (remainingMesh, removedPart);
+    }
+
+    private float ComputeMeshVolumeSafe(Mesh mesh, Vector3 lossyScale)
+    {
+        if (mesh == null) return 0f;
+        Vector3 size = mesh.bounds.size;
+        size = new Vector3(Mathf.Abs(size.x * lossyScale.x), Mathf.Abs(size.y * lossyScale.y), Mathf.Abs(size.z * lossyScale.z));
+        return size.x * size.y * size.z;
     }
 
     public void CutHole()

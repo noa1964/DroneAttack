@@ -4086,6 +4086,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   rigi: {fileID: 0}
+  showGizmosAlways: 1
+  showLastExplosion: 1
+  gizmoColor: {r: 1, g: 0, b: 0, a: 0.6}
 --- !u!4 &139923339
 Transform:
   m_ObjectHideFlags: 0
@@ -16531,8 +16534,6 @@ MonoBehaviour:
   holeOutputMin: 27
   holeOutputMax: 62
   holeCurveExponent: 1.5
-  thinWallBaseNormalized: 0.6
-  explosiveSensitivityAtThick: 1.2
   blastK: 0.09
   blastMappedMin: 0.1
   blastMappedMax: 1
