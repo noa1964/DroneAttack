@@ -63,6 +63,7 @@ public class WallShatter : MonoBehaviour
     [SerializeField] private float _DeformForceMultiplier = 0.008f; // scale applied to _ExplosionForce
     [SerializeField] private float _InwardScaleMin = 0.05f;        // smallest indentation
     [SerializeField] private float _InwardScaleMax = 0.1f;        // largest indentation
+    [SerializeField] private bool _ApplyPermanentDeformation = true; // whether to apply a permanent deformation at the hit point
 
     private void Start()
     {
@@ -99,7 +100,7 @@ public class WallShatter : MonoBehaviour
                 _ProBuilderTool.CutHoleWithResult(wall, spawnedSubMesh);
 
             // Add MeshDeformer to the remaining piece and apply a small permanent inward deformation at the hit point.
-            if (_currentRemaning != null)
+            if (_currentRemaning != null && _ApplyPermanentDeformation)
             {
                 StartCoroutine(EnsurePermanentDeformation(_currentRemaning, hitPoint));
             }
@@ -111,6 +112,7 @@ public class WallShatter : MonoBehaviour
 
             if (_currentHole != null)
             {
+                Debug.Log("Starting recursive shatter... " + _Iterations);
                 ShatterRecursive(_currentHole, hitPoint, hitNormal, _Iterations);
             }
 

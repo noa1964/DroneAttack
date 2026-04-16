@@ -1,8 +1,10 @@
 using UnityEngine;
 using EzySlice;
+using System.Collections.Generic;
 
 public class WindowShatter : MonoBehaviour
 {
+    [SerializeField] private List<GameObject> _WindowsList;
     [Header("Shatter Settings")]
     [SerializeField] private Material crossSectionMaterial;
     [SerializeField] private int minIterations = 2;
@@ -18,16 +20,18 @@ public class WindowShatter : MonoBehaviour
     /// <summary>
     /// Call this to shatter any object (like a window)
     /// </summary>
-    public void Shatter(GameObject target)
+    public void Shatter()
     {
-        if (target == null) return;
+        foreach (GameObject window in _WindowsList)
+        {
 
-        int iterations = Random.Range(minIterations, maxIterations + 1);
+            int iterations = Random.Range(minIterations, maxIterations + 1);
 
-        Vector3 hitPoint = target.transform.position;
-        Vector3 hitNormal = Random.onUnitSphere;
+            Vector3 hitPoint = window.transform.position;
+            Vector3 hitNormal = Random.onUnitSphere;
 
-        ShatterRecursive(target, hitPoint, hitNormal, iterations);
+            ShatterRecursive(window, hitPoint, hitNormal, iterations);
+        }
     }
 
     private void ShatterRecursive(GameObject obj, Vector3 hitPoint, Vector3 hitNormal, int iterationsLeft)

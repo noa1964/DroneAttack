@@ -4,6 +4,8 @@ using UnityEngine;
 using EzySlice;
 using System;
 using Random = UnityEngine.Random;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class CarShatter : MonoBehaviour
 {
@@ -35,10 +37,11 @@ public class CarShatter : MonoBehaviour
         //_ExplosionRadius = radius;
         foreach(ShatterObjInfo shatter in _ShatterObjs)
         {
-            ShatterRecursive(shatter.obj, hitPoint, hitNormal, Random.Range(7, 10), shatter.material);
+            Debug.Log($"Shattering {shatter.obj.name} ");
+            ShatterRecursive(shatter.obj, hitPoint, hitNormal, 5, shatter.material);
         }
     }
-    public void ShatterRecursive(
+    private void ShatterRecursive(
         GameObject obj,
         Vector3 hitPoint,
         Vector3 hitNormal,
@@ -53,13 +56,15 @@ public class CarShatter : MonoBehaviour
         GameObject[] slices =
             obj.SliceInstantiate(planeOrigin, planeNormal, mat);
 
+        Debug.Log("the slice " + obj.name + " produced " + (slices == null ? "no pieces" : slices.Length + " pieces"));
+        //obj.transform.position = planeNormal;
         if (slices == null)
         {
             if (!obj.TryGetComponent<Rigidbody>(out _))
             {
                 Rigidbody rb = obj.AddComponent<Rigidbody>();
-                Vector3 forceDirection = Vector3.forward; // replace with the direction you want
-                float forceAmount = 500; // adjust as needed
+                Vector3 forceDirection = Vector3.forward;
+                float forceAmount = 500;
                 rb.AddForce(forceDirection * forceAmount, ForceMode.Impulse);
             }
 
@@ -71,10 +76,8 @@ public class CarShatter : MonoBehaviour
             piece.transform.SetParent(_FragmentsParent);
             AddPhysics(piece, hitPoint, hitNormal);
 
-            ShatterRecursive(piece, hitPoint, hitNormal, iterationsLeft - 1, mat);
+            ShatterRecursive(piece, hitPoint, hitNormal, iterationsLeft - 1,mat);
         }
-
-        //SpawnImpactParticles(hitPoint, hitNormal);
 
         obj.SetActive(false);
     }
